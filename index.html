@@ -2,211 +2,230 @@
 <html lang="te">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Daily Bible Quiz</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Ramabhadra&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Noto+Sans+Telugu:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
         body {
-            font-family: 'Ramabhadra', sans-serif;
-            background: radial-gradient(circle at 50% 50%, #1c1917 0%, #0c0a09 100%);
-            color: #f5f5f4;
+            font-family: 'Noto Sans Telugu', sans-serif;
+            background-color: #0f0f0f;
+            color: #f5f5f5;
+            -webkit-tap-highlight-color: transparent; /* Removes blue tap highlight on mobile */
         }
         .eng-heading {
             font-family: 'Cinzel', serif;
-            letter-spacing: 0.05em;
+            letter-spacing: 1px;
         }
-        /* గ్లాస్-మార్ఫిజం ఎఫెక్ట్ */
-        .glass-card {
-            background: rgba(44, 40, 36, 0.4);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(214, 158, 46, 0.15);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        /* క్లీన్ మొబైల్ కార్డ్ డిజైన్ */
+        .clean-card {
+            background-color: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 16px;
+            transition: all 0.3s ease;
         }
-        /* హోవర్ చేసినప్పుడు గ్లో అయ్యే ఎఫెక్ట్ */
-        .glass-card:hover {
-            border-color: rgba(214, 158, 46, 0.4);
-            box-shadow: 0 0 20px rgba(214, 158, 46, 0.1);
-            transform: translateY(-2px);
+        /* డైనమిక్ హోవర్ & ఫోకస్ ఎఫెక్ట్స్ (గ్లో లేకుండా) */
+        .clean-card:hover {
+            border-color: #d97706; /* Amber-600 */
         }
-        .gold-glow {
-            text-shadow: 0 0 10px rgba(214, 158, 46, 0.5);
+        .dynamic-input:focus {
+            border-color: #d97706;
+            background-color: #262626;
+            outline: none;
         }
-        .gold-btn {
-            background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
-            box-shadow: 0 4px 15px rgba(180, 83, 9, 0.3);
-        }
-        .gold-btn:hover {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
-            transform: scale(1.02);
-        }
-        /* స్మూత్ ఫేడ్ ఇన్ యానిమేషన్ */
+        /* స్మూత్ ఎంట్రీ యానిమేషన్ */
         .fade-in {
-            animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            animation: fadeInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(12px); }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+        /* కస్టమ్ స్క్రోల్ బార్ ఫర్ మొబైల్ టేబుల్స్ */
+        .hide-scroll::-webkit-scrollbar {
+            height: 4px;
+        }
+        .hide-scroll::-webkit-scrollbar-thumb {
+            background-color: #404040;
+            border-radius: 4px;
         }
     </style>
 </head>
-<body class="min-h-screen antialiased selection:bg-amber-500/30 selection:text-amber-200">
+<body class="min-h-screen antialiased selection:bg-amber-600 selection:text-white">
 
-    <div id="authScreen" class="fixed inset-0 bg-black/85 backdrop-blur-xl z-50 flex items-center justify-center p-4">
-        <div class="glass-card p-8 rounded-3xl max-w-md w-full transition-all duration-300">
-            <div class="text-center mb-6">
-                <span class="text-5xl block mb-3 drop-shadow-[0_0_10px_rgba(214,158,46,0.4)]">✨</span>
-                <h2 class="text-3xl font-black text-amber-500 eng-heading gold-glow">Daily Bible Quiz</h2>
-                <p class="text-stone-400 font-medium text-xs mt-2">ముందుగా మీ మొబైల్ నంబర్ ఎంటర్ చేయండి</p>
+    <div id="authScreen" class="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+        <div class="clean-card p-6 sm:p-8 w-full max-w-md m-auto my-8 fade-in">
+            <div class="text-center mb-8">
+                <span class="text-5xl block mb-4">📖</span>
+                <h2 class="text-2xl sm:text-3xl font-bold text-amber-500 eng-heading">Daily Bible Quiz</h2>
+                <p class="text-stone-400 font-medium text-sm mt-2">మీ మొబైల్ నంబర్‌తో లాగిన్ అవ్వండి</p>
             </div>
             
-            <form id="phoneCheckForm" onsubmit="checkMobileNumber(event)" class="space-y-4">
+            <form id="phoneCheckForm" onsubmit="checkMobileNumber(event)" class="space-y-5">
                 <div>
-                    <label class="block text-[10px] font-bold text-amber-500/80 mb-1 uppercase tracking-widest">మొబైల్ నంబర్ (Mobile Number) *</label>
-                    <input type="tel" id="loginPhone" required pattern="[0-9]{10}" placeholder="10 అంకెల నంబర్" class="w-full px-4 py-3 bg-stone-900/60 border border-stone-800 rounded-xl text-stone-200 placeholder-stone-600 focus:border-amber-500 focus:outline-none transition-all text-sm font-bold tracking-wider">
+                    <label class="block text-xs font-bold text-amber-500 mb-2 uppercase tracking-wide">మొబైల్ నంబర్ *</label>
+                    <input type="tel" id="loginPhone" required pattern="[0-9]{10}" placeholder="10 అంకెల నంబర్" class="w-full px-4 py-3.5 bg-stone-900 border border-stone-700 rounded-xl text-white placeholder-stone-500 dynamic-input text-base tracking-widest font-semibold text-center">
                 </div>
-                <button type="submit" class="w-full gold-btn text-white font-bold py-3 px-4 rounded-xl transform active:scale-95 transition-all cursor-pointer text-sm tracking-wide">
-                    ಮುಂದಕ್ಕೆ ಸಾಗಂಡಿ ➡️
+                <button type="submit" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold py-3.5 px-4 rounded-xl transform active:scale-95 transition-all cursor-pointer text-sm sm:text-base">
+                    ముందుకు సాగండి &rarr;
                 </button>
             </form>
 
-            <form id="extendedSignupForm" onsubmit="handleDatabaseSignup(event)" class="space-y-4 hidden mt-4 pt-4 border-t border-stone-800/60 fade-in">
-                <p class="text-xs font-bold text-amber-200 bg-amber-950/40 border border-amber-900/40 p-2.5 rounded-xl">⚠️ మీరు కొత్త యూజర్! దయచేసి వివరాలు పూరించండి.</p>
+            <form id="extendedSignupForm" onsubmit="handleDatabaseSignup(event)" class="space-y-4 hidden mt-6 pt-6 border-t border-stone-800 fade-in">
+                <div class="bg-amber-900/30 border border-amber-800/50 p-3 rounded-xl flex items-start gap-3">
+                    <span class="text-lg">⚠️</span>
+                    <p class="text-xs font-bold text-amber-400 leading-relaxed">మీరు కొత్త యూజర్! ఖాతా సృష్టించడానికి క్రింది వివరాలు పూరించండి.</p>
+                </div>
+                
                 <div>
-                    <label class="block text-xs font-bold text-stone-400 mb-1">పూర్తి పేరు (Full Name) *</label>
-                    <input type="text" id="regName" required placeholder="మీ పేరు" class="w-full px-4 py-2.5 bg-stone-900/60 border border-stone-800 rounded-xl text-stone-200 focus:border-amber-500 focus:outline-none text-sm">
+                    <label class="block text-xs font-bold text-stone-400 mb-1.5">పూర్తి పేరు (Full Name) *</label>
+                    <input type="text" id="regName" required placeholder="మీ పేరు" class="w-full px-4 py-3 bg-stone-900 border border-stone-700 rounded-xl text-white dynamic-input text-sm">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="col-span-2">
+                        <label class="block text-xs font-bold text-stone-400 mb-1.5">చర్చి పేరు (Church Name) *</label>
+                        <input type="text" id="regChurch" required placeholder="మీరు వెళ్లే చర్చి పేరు" class="w-full px-4 py-3 bg-stone-900 border border-stone-700 rounded-xl text-white dynamic-input text-sm">
+                    </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-stone-400 mb-1">వయస్సు (Age) *</label>
-                    <input type="number" id="regAge" required min="5" max="100" placeholder="మీ వయసు" class="w-full px-4 py-2.5 bg-stone-900/60 border border-stone-800 rounded-xl text-stone-200 focus:border-amber-500 focus:outline-none text-sm">
+                    <label class="block text-xs font-bold text-stone-400 mb-1.5">వయస్సు (Age) *</label>
+                    <input type="number" id="regAge" required min="5" max="100" placeholder="మీ వయసు" class="w-full px-4 py-3 bg-stone-900 border border-stone-700 rounded-xl text-white dynamic-input text-sm">
                 </div>
-                <div>
-                    <label class="block text-xs font-bold text-stone-400 mb-1">చర్చి పేరు (Church Name) *</label>
-                    <input type="text" id="regChurch" required placeholder="మీరు వెళ్లే చర్చి పేరు" class="w-full px-4 py-2.5 bg-stone-900/60 border border-stone-800 rounded-xl text-stone-200 focus:border-amber-500 focus:outline-none text-sm">
-                </div>
-                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-4 rounded-xl shadow-lg transform active:scale-95 transition-all cursor-pointer text-sm">
-                    ఖాతా సృష్టించి క్విజ్ లోకి వెళ్ళండి 🎉
+                
+                <button type="submit" class="w-full bg-emerald-700 hover:bg-emerald-600 text-white font-bold py-3.5 px-4 rounded-xl mt-2 transform active:scale-95 transition-all cursor-pointer text-sm sm:text-base">
+                    రిజిస్ట్రేషన్ పూర్తి చేయండి ✓
                 </button>
             </form>
         </div>
     </div>
 
-    <header class="bg-stone-950/80 border-b border-stone-900 text-white shadow-2xl sticky top-0 z-40 backdrop-blur-md">
-        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-wrap justify-between items-center">
-            <div class="flex items-center space-x-3 group">
-                <span class="text-3xl drop-shadow-[0_0_8px_rgba(214,158,46,0.5)] transition-transform group-hover:scale-110 duration-300">✨</span>
-                <h1 class="text-2xl font-black tracking-wide eng-heading text-amber-500 gold-glow">Daily Bible Quiz</h1>
+    <header class="bg-[#141414] border-b border-[#2a2a2a] sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 py-3 sm:py-4 flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-0">
+            <div class="flex items-center space-x-2 w-full sm:w-auto justify-between sm:justify-start">
+                <div class="flex items-center space-x-2">
+                    <span class="text-xl sm:text-2xl">📖</span>
+                    <h1 class="text-lg sm:text-xl font-bold eng-heading text-amber-500">Daily Bible Quiz</h1>
+                </div>
+                <div class="sm:hidden flex items-center space-x-2">
+                    <button onclick="logoutSession()" class="text-[10px] font-bold bg-stone-800 text-red-400 px-2.5 py-1.5 rounded-lg border border-stone-700 active:bg-stone-700 transition">లాగౌట్</button>
+                </div>
             </div>
-            <div class="flex items-center space-x-3 mt-2 sm:mt-0">
-                <span id="userNameHeader" class="text-xs bg-amber-500/10 text-amber-400 px-3 py-1.5 rounded-full border border-amber-500/20 font-bold hidden">👤 యూజర్</span>
-                <select id="roleSelector" onchange="toggleViewMode()" class="bg-stone-900 text-stone-300 px-3 py-1.5 rounded-lg border border-stone-800 text-xs font-bold cursor-pointer hover:border-amber-500/50 transition">
+
+            <div class="flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-end">
+                <span id="userNameHeader" class="text-xs bg-stone-800 text-amber-500 px-3 py-1.5 rounded-full border border-stone-700 font-bold hidden truncate max-w-[120px]">👤</span>
+                
+                <select id="roleSelector" onchange="toggleViewMode()" class="bg-[#1f1f1f] text-stone-300 px-3 py-2 rounded-lg border border-[#333] text-xs font-bold cursor-pointer w-full sm:w-auto focus:border-amber-500 focus:outline-none">
                     <option value="user">🙋‍♂️ User Dashboard</option>
                     <option value="admin">🛠️ Admin Console</option>
                 </select>
-                <button onclick="logoutSession()" class="text-xs bg-stone-900 hover:bg-red-950 hover:text-red-400 text-stone-400 px-2.5 py-1.5 rounded-lg border border-stone-800 hover:border-red-900/50 transition font-bold cursor-pointer">లాగౌట్</button>
+                
+                <button onclick="logoutSession()" class="hidden sm:block text-xs font-bold bg-stone-800 text-red-400 hover:text-red-300 px-3 py-2 rounded-lg border border-stone-700 hover:border-red-900 transition cursor-pointer">లాగౌట్</button>
             </div>
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-4 py-8">
-        <div id="userContainer" class="space-y-8 fade-in">
-            <div class="glass-card p-6 sm:p-8 rounded-3xl flex flex-wrap justify-between items-center gap-4 transition-all duration-300">
-                <div>
-                    <span class="text-[10px] font-bold tracking-widest text-amber-400 uppercase bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full">TODAY'S HOLY SCRIPTURE</span>
-                    <h2 id="liveChapters" class="text-2xl sm:text-3xl font-bold text-stone-100 mt-3">లోడ్ అవుతోంది...</h2>
+    <main class="max-w-6xl mx-auto px-3 sm:px-4 py-6 sm:py-8">
+        <div id="userContainer" class="space-y-5 sm:space-y-6 fade-in">
+            <div class="clean-card p-5 sm:p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div class="w-full sm:w-auto">
+                    <span class="text-[10px] font-bold tracking-widest text-amber-500 uppercase block mb-1">TODAY'S SCRIPTURE</span>
+                    <h2 id="liveChapters" class="text-xl sm:text-2xl font-bold text-white leading-snug">లోడ్ అవుతోంది...</h2>
                 </div>
-                <div class="flex items-center space-x-3 bg-gradient-to-br from-amber-500/10 to-transparent px-6 py-3 rounded-2xl border border-amber-500/20 shadow-lg">
-                    <span class="text-3xl animate-pulse">🔥</span>
-                    <div>
-                        <p class="text-[9px] text-stone-400 font-bold uppercase tracking-wider">మీ లైవ్ స్ట్రీక్</p>
-                        <p id="liveStreak" class="text-xl font-black text-amber-500 gold-glow">0 రోజులు</p>
+                <div class="flex items-center space-x-3 bg-stone-900/80 px-4 py-2.5 rounded-xl border border-stone-800 w-full sm:w-auto justify-center sm:justify-start">
+                    <span class="text-2xl">🔥</span>
+                    <div class="text-left">
+                        <p class="text-[10px] text-stone-400 font-bold uppercase tracking-wider">లైవ్ స్ట్రీక్</p>
+                        <p id="liveStreak" class="text-lg font-bold text-amber-500 leading-none mt-0.5">0 రోజులు</p>
                     </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="lg:col-span-2 glass-card p-6 sm:p-8 rounded-3xl transition-all duration-300">
-                    <h3 class="text-xl font-bold text-amber-500 mb-6 flex items-center border-b border-stone-800 pb-3 tracking-wide gold-glow">
-                        <span class="mr-2">👑</span> నేటి 10 ప్రత్యేక ప్రశ్నలు
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-6">
+                <div class="lg:col-span-2 clean-card p-5 sm:p-6">
+                    <h3 class="text-base sm:text-lg font-bold text-amber-500 mb-4 sm:mb-5 flex items-center border-b border-stone-800 pb-3">
+                        <span class="mr-2">📝</span> నేటి 10 ప్రశ్నలు
                     </h3>
-                    <ol id="liveQuestionsList" class="space-y-4 list-decimal list-inside text-stone-300 text-sm sm:text-base leading-relaxed">
+                    <ol id="liveQuestionsList" class="space-y-3 sm:space-y-4 list-decimal list-outside ml-4 text-stone-300 text-sm sm:text-base leading-relaxed font-medium">
                         </ol>
                 </div>
 
-                <div class="space-y-6">
-                    <div class="glass-card p-6 rounded-3xl transition-all duration-300">
-                        <h3 class="text-lg font-bold text-amber-500 mb-4 flex items-center">
+                <div class="space-y-5 sm:space-y-6">
+                    <div class="clean-card p-5 sm:p-6">
+                        <h3 class="text-sm sm:text-base font-bold text-amber-500 mb-3 sm:mb-4 flex items-center">
                             <span class="mr-2">📸</span> జవాబుల ఫోటో అప్‌లోడ్
                         </h3>
-                        <div class="border border-dashed border-stone-800 rounded-2xl p-6 text-center bg-stone-950/30 hover:border-amber-500/50 hover:bg-amber-500/5 transition duration-300 group">
+                        <div class="border border-dashed border-stone-600 rounded-xl p-5 text-center bg-stone-900 hover:border-amber-500 transition duration-300 active:bg-stone-800">
                             <input type="file" id="dbImageUpload" class="hidden" accept="image/*" onchange="uploadAnswerSheetToCloud(this)">
-                            <label for="dbImageUpload" class="cursor-pointer block">
-                                <span class="text-4xl block mb-2 group-hover:scale-110 transition-transform">📤</span>
-                                <span class="text-sm font-bold text-stone-400 block group-hover:text-amber-400 transition-colors">ఫోటో అప్‌లోడ్ చేయండి</span>
+                            <label for="dbImageUpload" class="cursor-pointer block w-full h-full">
+                                <span class="text-3xl block mb-2">📤</span>
+                                <span class="text-sm font-bold text-stone-300 block">ఫోటో ఎంచుకోండి</span>
+                                <span class="text-[10px] text-stone-500 mt-1 block">Maximum 5MB</span>
                             </label>
                         </div>
-                        <div id="cloudUploadSuccess" class="hidden mt-4 text-center p-3 bg-emerald-950/40 border border-emerald-900/50 text-emerald-400 rounded-xl text-xs font-bold fade-in">
-                            ✓ చిత్రం సురక్షితంగా క్లౌడ్ స్టోరేజ్ లో సేవ్ అయింది!
+                        <div id="cloudUploadSuccess" class="hidden mt-3 text-center p-2.5 bg-emerald-950 border border-emerald-800 text-emerald-400 rounded-lg text-xs font-bold fade-in">
+                            ✓ చిత్రం అప్‌లోడ్ అయింది!
                         </div>
                     </div>
 
-                    <div class="glass-card p-6 rounded-3xl transition-all duration-300">
-                        <h3 class="text-lg font-bold text-amber-500 mb-3 flex items-center">
-                            <span class="mr-2">🎖️</span> లైవ్ మార్కులు & రిమార్క్స్
+                    <div class="clean-card p-5 sm:p-6">
+                        <h3 class="text-sm sm:text-base font-bold text-amber-500 mb-3 flex items-center">
+                            <span class="mr-2">🎖️</span> లైవ్ మార్కులు
                         </h3>
-                        <div id="liveFeedbackBlock" class="text-stone-500 text-xs italic py-2 text-center">
-                            దిద్దిన తర్వాత మీ రియల్-టైమ్ గ్రేడ్ ఇక్కడ కనిపిస్తుంది.
+                        <div id="liveFeedbackBlock" class="text-stone-500 text-xs italic py-3 text-center bg-stone-900 rounded-xl border border-stone-800">
+                            దిద్దిన తర్వాత మార్కులు ఇక్కడ కనిపిస్తాయి.
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div id="adminContainer" class="space-y-8 hidden fade-in">
-            <div class="glass-card p-6 rounded-3xl grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div id="adminContainer" class="space-y-5 sm:space-y-6 hidden fade-in">
+            <div class="clean-card p-5 sm:p-6 grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
                 <div>
-                    <h3 class="text-lg font-bold text-amber-500 mb-4 flex items-center"><span class="mr-2">📢</span> కొత్త లేఖన భాగాలు పోస్ట్ చేయండి</h3>
-                    <div class="space-y-3">
-                        <input type="text" id="dbChaptersInput" placeholder="ఉదాహరణ: ఆదికాండము 3 & 4" class="w-full px-4 py-2.5 bg-stone-900/50 border border-stone-800 rounded-xl text-sm text-stone-200 focus:border-amber-500 focus:outline-none">
-                        <textarea id="dbQuestionsInput" rows="6" placeholder="ప్రతి లైన్ కి ఒక ప్రశ్న చొప్పున 10 ప్రశ్నలు ఎంటర్ చేయండి" class="w-full px-4 py-2.5 bg-stone-900/50 border border-stone-800 rounded-xl text-xs font-mono text-stone-200 focus:border-amber-500 focus:outline-none leading-relaxed"></textarea>
-                        <button onclick="publishQuizToCloud()" class="w-full gold-btn text-white font-bold py-2.5 rounded-xl text-xs cursor-pointer tracking-wider">డేటాబేస్ లో పబ్లిష్ చేయి ⚡</button>
+                    <h3 class="text-sm sm:text-base font-bold text-amber-500 mb-4 flex items-center"><span class="mr-2">📢</span> కొత్త లేఖన భాగాలు పోస్ట్ చేయండి</h3>
+                    <div class="space-y-4">
+                        <input type="text" id="dbChaptersInput" placeholder="ఉదా: ఆదికాండము 3 & 4" class="w-full px-4 py-3 bg-stone-900 border border-stone-700 rounded-xl text-sm text-white dynamic-input">
+                        <textarea id="dbQuestionsInput" rows="7" placeholder="ప్రతి లైన్ కి ఒక ప్రశ్న చొప్పున 10 ప్రశ్నలు ఎంటర్ చేయండి..." class="w-full px-4 py-3 bg-stone-900 border border-stone-700 rounded-xl text-xs sm:text-sm text-white dynamic-input leading-relaxed resize-y"></textarea>
+                        <button onclick="publishQuizToCloud()" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold py-3.5 rounded-xl text-sm transition-all active:scale-95">డేటాబేస్ లో పబ్లిష్ చేయి ⚡</button>
                     </div>
                 </div>
                 <div>
-                    <h3 class="text-lg font-bold text-amber-500 mb-4 flex items-center"><span class="mr-2">📥</span> లైవ్ గ్రేడింగ్ ప్యానెల్</h3>
-                    <div id="adminGradingQueue" class="text-xs text-stone-500 italic p-4 border border-stone-800 rounded-2xl bg-stone-950/20">
-                        యూజర్లు ఫోటోలు అప్‌లోడ్ చేసినప్పుడు అవి ఇక్కడ రియల్-టైమ్‌లో కనిపిస్తాయి.
+                    <h3 class="text-sm sm:text-base font-bold text-amber-500 mb-4 flex items-center"><span class="mr-2">📥</span> లైవ్ గ్రేడింగ్ క్యూ</h3>
+                    <div id="adminGradingQueue" class="text-xs sm:text-sm text-stone-400 p-4 border border-stone-800 rounded-xl bg-stone-900 flex items-center justify-center min-h-[150px] text-center">
+                        యూజర్లు ఫోటోలు అప్‌లోడ్ చేసినప్పుడు అవి ఇక్కడ కనిపిస్తాయి.
                     </div>
                 </div>
             </div>
         </div>
 
-        <hr class="border-stone-900 my-12">
-        <section class="max-w-2xl mx-auto space-y-6 fade-in">
-            <div class="text-center">
-                <h2 class="text-3xl font-bold text-stone-100 eng-heading tracking-wide">Community Leaderboard</h2>
-                <p class="text-xs text-amber-500/80 font-medium mt-1 gold-glow">డేటాబేస్ నుండి రియల్-టైమ్ ర్యాంకులు లెక్కించబడుతున్నాయి</p>
+        <hr class="border-stone-800 my-8 sm:my-10">
+        <section class="max-w-3xl mx-auto space-y-4 sm:space-y-6 fade-in">
+            <div class="text-center px-2">
+                <h2 class="text-xl sm:text-2xl font-bold text-white eng-heading">Community Leaderboard</h2>
+                <p class="text-[10px] sm:text-xs text-stone-400 mt-1">డేటాబేస్ నుండి రియల్-టైమ్ ర్యాంకులు</p>
             </div>
-            <div class="glass-card rounded-3xl overflow-hidden text-sm">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-stone-950/60 border-b border-stone-900 text-amber-500 text-xs tracking-wider">
-                            <th class="px-5 py-4 w-16 text-center font-bold">RANK</th>
-                            <th class="px-5 py-4 font-bold">STUDENT DETAILS</th>
-                            <th class="px-5 py-4 text-right font-bold">DAILY STREAK</th>
-                        </tr>
-                    </thead>
-                    <tbody id="cloudLeaderboardBody" class="divide-y divide-stone-900 text-stone-300 font-medium">
-                        <tr>
-                            <td colspan="3" class="px-5 py-8 text-center text-stone-500 italic">డేటాబేస్ నుండి విద్యార్థుల వివరాలను లోడ్ చేస్తోంది...</td>
-                        </tr>
-                    </tbody>
-                </table>
+            
+            <div class="clean-card overflow-hidden">
+                <div class="w-full overflow-x-auto hide-scroll">
+                    <table class="w-full text-left border-collapse min-w-[400px]">
+                        <thead>
+                            <tr class="bg-stone-900 border-b border-stone-800 text-amber-500 text-[10px] sm:text-xs tracking-wider uppercase">
+                                <th class="px-4 sm:px-6 py-4 w-16 text-center font-bold">Rank</th>
+                                <th class="px-4 sm:px-6 py-4 font-bold">Student Name & Church</th>
+                                <th class="px-4 sm:px-6 py-4 text-right font-bold w-28 sm:w-32">Streak</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cloudLeaderboardBody" class="divide-y divide-stone-800/50 text-stone-300 text-xs sm:text-sm">
+                            <tr>
+                                <td colspan="3" class="px-4 py-8 text-center text-stone-500">లోడ్ అవుతోంది...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </section>
     </main>
@@ -234,7 +253,9 @@
                 document.getElementById('liveStreak').innerText = `${currentUserSession.streak} రోజులు`;
                 
                 const headerName = document.getElementById('userNameHeader');
-                headerName.innerText = `👤 ${currentUserSession.name}`;
+                // Extract first name for mobile header
+                const shortName = currentUserSession.name.split(' ')[0];
+                headerName.innerText = `👤 ${shortName}`;
                 headerName.classList.remove('hidden');
                 
                 fetchUserFeedback();
@@ -246,28 +267,41 @@
         async function checkMobileNumber(e) {
             e.preventDefault();
             const phone = document.getElementById('loginPhone').value.trim();
+            const btn = e.target.querySelector('button[type="submit"]');
+            
+            // Loading state
+            btn.innerHTML = "వెతుకుతోంది...";
+            btn.disabled = true;
+            btn.classList.add('opacity-70');
+
             temporaryCheckedPhone = phone;
 
-            const { data, error } = await supabaseClient
-                .from('profiles')
-                .select('*')
-                .eq('phone_number', phone);
+            try {
+                const { data, error } = await supabaseClient
+                    .from('profiles')
+                    .select('*')
+                    .eq('phone_number', phone);
 
-            if (data && data.length > 0) {
-                const existingUser = data[0];
-                currentUserSession = { 
-                    id: existingUser.id, 
-                    name: existingUser.full_name, 
-                    church: existingUser.church_name, 
-                    streak: existingUser.streak 
-                };
-                localStorage.setItem('quiz_user_session', JSON.stringify(currentUserSession));
-                
-                alert(`స్వాగతం, ${existingUser.full_name}! మీ లాగిన్ విజయవంతమైంది.`);
-                location.reload(); 
-            } else {
-                document.getElementById('extendedSignupForm').classList.remove('hidden');
-                document.getElementById('loginPhone').disabled = true; 
+                if (data && data.length > 0) {
+                    const existingUser = data[0];
+                    currentUserSession = { 
+                        id: existingUser.id, 
+                        name: existingUser.full_name, 
+                        church: existingUser.church_name, 
+                        streak: existingUser.streak 
+                    };
+                    localStorage.setItem('quiz_user_session', JSON.stringify(currentUserSession));
+                    location.reload(); 
+                } else {
+                    document.getElementById('extendedSignupForm').classList.remove('hidden');
+                    document.getElementById('loginPhone').disabled = true; 
+                    btn.innerHTML = "కొత్త ఖాతా";
+                }
+            } catch (err) {
+                alert("నెట్‌వర్క్ లోపం దయచేసి మళ్ళీ ప్రయత్నించండి.");
+                btn.innerHTML = "ముందుకు సాగండి &rarr;";
+                btn.disabled = false;
+                btn.classList.remove('opacity-70');
             }
         }
 
@@ -276,6 +310,10 @@
             const name = document.getElementById('regName').value.trim();
             const age = parseInt(document.getElementById('regAge').value);
             const church = document.getElementById('regChurch').value.trim();
+            const btn = e.target.querySelector('button[type="submit"]');
+
+            btn.innerHTML = "ఖాతా సృష్టించబడుతోంది...";
+            btn.disabled = true;
 
             const { data, error } = await supabaseClient
                 .from('profiles')
@@ -290,27 +328,23 @@
                 .select();
 
             if (error) {
-                alert("రిజిస్ట్రేషన్ లో లోపం దొర్లింది: " + error.message);
+                alert("లోపం దొర్లింది: " + error.message);
+                btn.innerHTML = "రిజిస్ట్రేషన్ పూర్తి చేయండి ✓";
+                btn.disabled = false;
                 return;
             }
 
             const registeredUser = data[0];
-            currentUserSession = { 
-                id: registeredUser.id, 
-                name: name, 
-                church: church, 
-                streak: 1 
-            };
+            currentUserSession = { id: registeredUser.id, name: name, church: church, streak: 1 };
             localStorage.setItem('quiz_user_session', JSON.stringify(currentUserSession));
-            
-            alert("మీ రిజిస్ట్రేషన్ విజయవంతంగా పూర్తయింది!");
             location.reload();
         }
 
         function logoutSession() {
-            localStorage.removeItem('quiz_user_session');
-            alert("మీరు లాగౌట్ అయ్యారు.");
-            location.reload();
+            if(confirm("మీరు లాగౌట్ అవ్వాలనుకుంటున్నారా?")) {
+                localStorage.removeItem('quiz_user_session');
+                location.reload();
+            }
         }
 
         async function fetchLiveQuiz() {
@@ -326,7 +360,7 @@
                 qList.innerHTML = "";
                 data[0].questions.forEach(q => {
                     const li = document.createElement('li');
-                    li.className = "pb-3 border-b border-stone-900 last:border-0 hover:text-amber-400 transition-colors pl-2";
+                    li.className = "pb-3 border-b border-stone-800/50 last:border-0 hover:text-white transition-colors";
                     li.innerText = q;
                     qList.appendChild(li);
                 });
@@ -346,25 +380,29 @@
 
             if (data && data.length > 0) {
                 data.forEach((user, index) => {
-                    let medal = index + 1;
-                    if(index === 0) medal = "🥇";
-                    if(index === 1) medal = "🥈";
-                    if(index === 2) medal = "🥉";
+                    let rankBadge = `<span class="text-stone-500 font-bold">#${index + 1}</span>`;
+                    if(index === 0) rankBadge = `<span class="text-xl drop-shadow-md">🥇</span>`;
+                    if(index === 1) rankBadge = `<span class="text-xl drop-shadow-md">🥈</span>`;
+                    if(index === 2) rankBadge = `<span class="text-xl drop-shadow-md">🥉</span>`;
+
+                    const isMe = (currentUserSession && currentUserSession.id === user.id) ? "bg-amber-900/10" : "";
 
                     const row = document.createElement('tr');
-                    row.className = "hover:bg-stone-900/40 border-b border-stone-900/60 transition-all duration-200 fade-in";
+                    row.className = `hover:bg-stone-800/40 transition-colors ${isMe}`;
                     row.innerHTML = `
-                        <td class="px-5 py-4 text-center font-bold text-stone-400">${medal}</td>
-                        <td class="px-5 py-4">
-                            <div class="font-bold text-stone-100">${user.full_name}</div>
-                            <div class="text-xs text-amber-500/60 font-semibold mt-0.5">${user.church_name}</div>
+                        <td class="px-4 sm:px-6 py-4 text-center align-middle">${rankBadge}</td>
+                        <td class="px-4 sm:px-6 py-4">
+                            <div class="font-bold text-white text-sm">${user.full_name}</div>
+                            <div class="text-[10px] sm:text-xs text-amber-500 mt-1 uppercase font-semibold">${user.church_name}</div>
                         </td>
-                        <td class="px-5 py-4 text-right font-bold text-amber-500 gold-glow">🔥 ${user.streak} రోజులు</td>
+                        <td class="px-4 sm:px-6 py-4 text-right font-bold text-amber-500 align-middle text-sm sm:text-base">
+                            🔥 ${user.streak}
+                        </td>
                     `;
                     tbody.appendChild(row);
                 });
             } else {
-                tbody.innerHTML = `<tr><td colspan="3" class="px-5 py-6 text-center text-stone-600 italic">ఇంకా ఎవరూ రిజిస్టర్ చేసుకోలేదు. మొదటి ప్రొఫైల్ కోసం వేచి ఉంది!</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="3" class="px-4 py-8 text-center text-stone-500 text-xs sm:text-sm">ఇంకా ఎవరూ రిజిస్టర్ చేసుకోలేదు.</td></tr>`;
             }
         }
 
@@ -384,21 +422,27 @@
                 .insert([{ chapters: chapters, questions: questionsArray }]);
 
             alert("ప్రశ్నలు పబ్లిష్ చేయబడ్డాయి!");
+            document.getElementById('dbChaptersInput').value = "";
+            document.getElementById('dbQuestionsInput').value = "";
             fetchLiveQuiz();
         }
 
         async function uploadAnswerSheetToCloud(input) {
             if(input.files && input.files[0]) {
                 document.getElementById('cloudUploadSuccess').classList.remove('hidden');
+                // Optional: Automatically fade out success message after 3 seconds
+                setTimeout(() => {
+                    document.getElementById('cloudUploadSuccess').classList.add('hidden');
+                }, 3000);
             }
         }
 
         async function fetchUserFeedback() {
             if (currentUserSession) {
                 document.getElementById('liveFeedbackBlock').innerHTML = `
-                    <div class="p-4 bg-stone-900/60 rounded-2xl border border-stone-800 text-left">
-                        <div class="font-bold text-amber-500">మార్కులు: ఇంకా ఇవ్వలేదు</div>
-                        <div class="text-stone-400 text-xs mt-1 leading-relaxed">అడ్మిన్ పరిశీలనలో ఉంది. మార్కులు వేయగానే ఇక్కడ అప్‌డేట్ అవుతుంది.</div>
+                    <div class="p-4 bg-stone-900 rounded-xl border border-stone-700 text-left">
+                        <div class="font-bold text-amber-500 flex items-center"><span class="mr-2">⏳</span> మార్కులు: ఇంకా ఇవ్వలేదు</div>
+                        <div class="text-stone-400 text-xs mt-2 leading-relaxed">అడ్మిన్ పరిశీలనలో ఉంది. మార్కులు వేయగానే ఇక్కడ అప్‌డేట్ అవుతుంది.</div>
                     </div>
                 `;
             }
