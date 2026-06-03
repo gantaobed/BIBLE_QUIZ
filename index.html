@@ -13,20 +13,16 @@
     <style>
         body {
             font-family: 'Noto Sans Telugu', sans-serif;
-            background-color: #fafafa; /* స్వచ్ఛమైన తెలుపు-గ్రే బ్యాక్‌గ్రౌండ్ */
+            background-color: #fafafa;
             color: #1f2937;
             -webkit-tap-highlight-color: transparent;
         }
-        .eng-heading {
-            font-family: 'Cinzel', serif;
-            letter-spacing: 1px;
-        }
-        /* రెడ్ & వైట్ కార్డ్ డిజైన్ */
+        .eng-heading { font-family: 'Cinzel', serif; letter-spacing: 1px; }
         .red-card {
             background-color: #ffffff;
-            border: 1px solid #fee2e2; /* లేత ఎరుపు బార్డర్ */
+            border: 1px solid #fee2e2;
             border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(220, 38, 38, 0.05); /* ఎరుపు షాడో */
+            box-shadow: 0 4px 20px rgba(220, 38, 38, 0.05);
             transition: all 0.3s ease;
         }
         .red-card:hover {
@@ -34,7 +30,6 @@
             box-shadow: 0 8px 25px rgba(220, 38, 38, 0.1);
             transform: translateY(-2px);
         }
-        /* ఇన్‌పుట్ ఫీల్డ్స్ */
         .dynamic-input {
             background-color: #f9fafb;
             border: 1px solid #e5e7eb;
@@ -42,12 +37,11 @@
             transition: all 0.2s;
         }
         .dynamic-input:focus {
-            border-color: #dc2626; /* ఎరుపు రంగు బార్డర్ */
+            border-color: #dc2626;
             background-color: #ffffff;
             box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
             outline: none;
         }
-        /* బటన్స్ */
         .red-btn {
             background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
             box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
@@ -58,9 +52,7 @@
             transform: scale(1.02);
             box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
         }
-        .fade-in {
-            animation: fadeInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
+        .fade-in { animation: fadeInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
@@ -73,6 +65,12 @@
 
     <div id="authScreen" class="fixed inset-0 bg-red-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
         <div class="bg-white p-6 sm:p-8 w-full max-w-md m-auto my-8 rounded-3xl shadow-2xl border border-red-100 fade-in">
+            <div class="flex justify-end mb-2">
+                <button onclick="openAdminLoginModal()" class="text-[10px] bg-red-50 text-red-700 font-bold px-3 py-1.5 rounded-lg border border-red-200 hover:bg-red-100 transition cursor-pointer">
+                    🔒 అడ్మిన్ లాగిన్
+                </button>
+            </div>
+
             <div class="text-center mb-8">
                 <span class="text-5xl block mb-4 drop-shadow-md">📖</span>
                 <h2 class="text-2xl sm:text-3xl font-bold text-red-700 eng-heading">Daily Bible Quiz</h2>
@@ -117,6 +115,33 @@
         </div>
     </div>
 
+    <div id="adminLoginModal" class="fixed inset-0 bg-stone-900/90 backdrop-blur-md z-[60] flex items-center justify-center p-4 hidden">
+        <div class="bg-white p-8 w-full max-w-sm rounded-3xl shadow-2xl border border-red-200 fade-in relative">
+            <button onclick="closeAdminLoginModal()" class="absolute top-4 right-4 text-stone-400 hover:text-red-600 text-xl font-bold">&times;</button>
+            <div class="text-center mb-6">
+                <span class="text-4xl block mb-2">🛠️</span>
+                <h2 class="text-xl font-bold text-red-800">Admin Portal Access</h2>
+                <p class="text-stone-500 text-[10px] mt-1 uppercase tracking-wider font-bold">Authorized Personnel Only</p>
+            </div>
+            <form onsubmit="verifyAdminCredentials(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-stone-600 mb-1">Admin ID</label>
+                    <input type="text" id="adminIdInput" required placeholder="Enter ID" class="w-full px-4 py-3 dynamic-input rounded-xl text-sm font-bold text-center">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-stone-600 mb-1">Password</label>
+                    <input type="password" id="adminPassInput" required placeholder="Enter Password" class="w-full px-4 py-3 dynamic-input rounded-xl text-sm font-bold text-center">
+                </div>
+                <div id="adminLoginError" class="hidden text-xs font-bold text-red-600 bg-red-50 p-2 rounded-lg text-center">
+                    ❌ తప్పు ID లేదా Password
+                </div>
+                <button type="submit" class="w-full bg-stone-900 hover:bg-stone-800 text-white font-bold py-3 px-4 rounded-xl cursor-pointer text-sm shadow-md transition-transform active:scale-95">
+                    Secure Login
+                </button>
+            </form>
+        </div>
+    </div>
+
     <header class="bg-gradient-to-r from-red-700 to-red-900 shadow-lg sticky top-0 z-40">
         <div class="max-w-6xl mx-auto px-4 py-3 sm:py-4 flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-0">
             <div class="flex items-center space-x-2 w-full sm:w-auto justify-between sm:justify-start">
@@ -132,10 +157,7 @@
             <div class="flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-end">
                 <span id="userNameHeader" class="text-xs bg-white text-red-700 px-3 py-1.5 rounded-full font-bold hidden truncate max-w-[120px] shadow-sm">👤</span>
                 
-                <select id="roleSelector" onchange="toggleViewMode()" class="bg-white/10 text-white px-3 py-2 rounded-lg border border-white/30 text-xs font-bold cursor-pointer w-full sm:w-auto focus:outline-none backdrop-blur-sm">
-                    <option value="user" class="text-stone-800">🙋‍♂️ User Dashboard</option>
-                    <option value="admin" class="text-stone-800">🛠️ Admin Console</option>
-                </select>
+                <span id="adminBadgeHeader" class="hidden text-[10px] font-black bg-stone-900 text-red-400 px-3 py-1.5 rounded-lg border border-red-900/50 tracking-wider uppercase">ADMIN MODE</span>
                 
                 <button onclick="logoutSession()" class="hidden sm:block text-xs font-bold bg-white/10 text-white hover:bg-white/20 px-4 py-2 rounded-lg border border-white/30 transition cursor-pointer">లాగౌట్</button>
             </div>
@@ -143,7 +165,7 @@
     </header>
 
     <main class="max-w-6xl mx-auto px-3 sm:px-4 py-6 sm:py-8">
-        <div id="userContainer" class="space-y-5 sm:space-y-6 fade-in">
+        <div id="userContainer" class="space-y-5 sm:space-y-6 fade-in hidden">
             <div class="red-card p-5 sm:p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white">
                 <div class="w-full sm:w-auto">
                     <span class="text-[10px] font-bold tracking-widest text-red-500 uppercase block mb-1">TODAY'S SCRIPTURE</span>
@@ -198,18 +220,18 @@
         </div>
 
         <div id="adminContainer" class="space-y-5 sm:space-y-6 hidden fade-in">
-            <div class="red-card p-5 sm:p-6 grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+            <div class="red-card p-5 sm:p-6 grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 bg-stone-50">
                 <div>
                     <h3 class="text-sm sm:text-base font-bold text-red-700 mb-4 flex items-center"><span class="mr-2">📢</span> కొత్త లేఖన భాగాలు పోస్ట్ చేయండి</h3>
                     <div class="space-y-4">
                         <input type="text" id="dbChaptersInput" placeholder="ఉదా: ఆదికాండము 3 & 4" class="w-full px-4 py-3 dynamic-input rounded-xl text-sm">
                         <textarea id="dbQuestionsInput" rows="7" placeholder="ప్రతి లైన్ కి ఒక ప్రశ్న చొప్పున 10 ప్రశ్నలు ఎంటర్ చేయండి..." class="w-full px-4 py-3 dynamic-input rounded-xl text-xs sm:text-sm leading-relaxed resize-y"></textarea>
-                        <button onclick="publishQuizToCloud()" class="w-full red-btn text-white font-bold py-3.5 rounded-xl text-sm transition-all cursor-pointer">డేటాబేస్ లో పబ్లిష్ చేయి ⚡</button>
+                        <button onclick="publishQuizToCloud()" class="w-full red-btn text-white font-bold py-3.5 rounded-xl text-sm transition-all cursor-pointer shadow-md active:scale-95">డేటాబేస్ లో పబ్లిష్ చేయి ⚡</button>
                     </div>
                 </div>
                 <div>
                     <h3 class="text-sm sm:text-base font-bold text-red-700 mb-4 flex items-center"><span class="mr-2">📥</span> లైవ్ గ్రేడింగ్ క్యూ</h3>
-                    <div id="adminGradingQueue" class="text-xs sm:text-sm text-stone-500 p-4 border border-stone-200 rounded-xl bg-stone-50 flex items-center justify-center min-h-[150px] text-center italic">
+                    <div id="adminGradingQueue" class="text-xs sm:text-sm text-stone-500 p-4 border border-stone-200 rounded-xl bg-white flex items-center justify-center min-h-[150px] text-center italic shadow-inner">
                         యూజర్లు ఫోటోలు అప్‌లోడ్ చేసినప్పుడు అవి ఇక్కడ కనిపిస్తాయి.
                     </div>
                 </div>
@@ -252,6 +274,13 @@
         let currentUserSession = null;
         let temporaryCheckedPhone = "";
 
+        // --- 3 ADMIN CREDENTIALS ---
+        const VALID_ADMINS = [
+            { id: "obed", pass: "obed123" },
+            { id: "jayaraju", pass: "jayaraju123" },
+            { id: "daniel", pass: "daniel123" }
+        ];
+
         async function initLiveApplication() {
             checkUserSession();
             fetchLiveQuiz();
@@ -264,19 +293,66 @@
             if (savedUser) {
                 currentUserSession = JSON.parse(savedUser);
                 document.getElementById('authScreen').classList.add('hidden');
-                document.getElementById('liveStreak').innerText = `${currentUserSession.streak} రోజులు`;
                 
-                const headerName = document.getElementById('userNameHeader');
-                const shortName = currentUserSession.name.split(' ')[0];
-                headerName.innerText = `👤 ${shortName}`;
-                headerName.classList.remove('hidden');
-                
-                fetchUserFeedback();
+                // అడ్మిన్ లాగిన్ అయి ఉన్నాడా అని చెక్ చేయడం
+                if(currentUserSession.role === 'admin') {
+                    document.getElementById('adminContainer').classList.remove('hidden');
+                    document.getElementById('userContainer').classList.add('hidden');
+                    document.getElementById('adminBadgeHeader').classList.remove('hidden');
+                    document.getElementById('userNameHeader').classList.add('hidden');
+                } else {
+                    // సాధారణ యూజర్ లాగిన్
+                    document.getElementById('userContainer').classList.remove('hidden');
+                    document.getElementById('adminContainer').classList.add('hidden');
+                    document.getElementById('liveStreak').innerText = `${currentUserSession.streak} రోజులు`;
+                    
+                    const headerName = document.getElementById('userNameHeader');
+                    const shortName = currentUserSession.name.split(' ')[0];
+                    headerName.innerText = `👤 ${shortName}`;
+                    headerName.classList.remove('hidden');
+                    
+                    fetchUserFeedback();
+                }
             } else {
                 document.getElementById('authScreen').classList.remove('hidden');
+                document.getElementById('userContainer').classList.add('hidden');
+                document.getElementById('adminContainer').classList.add('hidden');
             }
         }
 
+        // --- ADMIN LOGIN LOGIC ---
+        function openAdminLoginModal() {
+            document.getElementById('adminLoginModal').classList.remove('hidden');
+            document.getElementById('adminLoginError').classList.add('hidden');
+        }
+
+        function closeAdminLoginModal() {
+            document.getElementById('adminLoginModal').classList.add('hidden');
+        }
+
+        function verifyAdminCredentials(e) {
+            e.preventDefault();
+            const idInput = document.getElementById('adminIdInput').value.trim();
+            const passInput = document.getElementById('adminPassInput').value.trim();
+            const errorBox = document.getElementById('adminLoginError');
+
+            // 3 అడ్మిన్లలో ఎవరైనా మ్యాచ్ అయ్యారా?
+            const matchedAdmin = VALID_ADMINS.find(admin => admin.id === idInput && admin.pass === passInput);
+
+            if (matchedAdmin) {
+                // సక్సెస్: అడ్మిన్ సెషన్ సేవ్ చేయి
+                currentUserSession = { id: matchedAdmin.id, name: "Admin", role: 'admin', streak: 0 };
+                localStorage.setItem('quiz_user_session', JSON.stringify(currentUserSession));
+                closeAdminLoginModal();
+                location.reload();
+            } else {
+                // ఫెయిల్: ఎర్రర్ చూపించు
+                errorBox.classList.remove('hidden');
+                document.getElementById('adminPassInput').value = "";
+            }
+        }
+
+        // --- USER LOGIN LOGIC ---
         async function checkMobileNumber(e) {
             e.preventDefault();
             const phone = document.getElementById('loginPhone').value.trim();
@@ -300,7 +376,8 @@
                         id: existingUser.id, 
                         name: existingUser.full_name, 
                         church: existingUser.church_name, 
-                        streak: existingUser.streak 
+                        streak: existingUser.streak,
+                        role: 'user'
                     };
                     localStorage.setItem('quiz_user_session', JSON.stringify(currentUserSession));
                     location.reload(); 
@@ -348,7 +425,7 @@
             }
 
             const registeredUser = data[0];
-            currentUserSession = { id: registeredUser.id, name: name, church: church, streak: 1 };
+            currentUserSession = { id: registeredUser.id, name: name, church: church, streak: 1, role: 'user' };
             localStorage.setItem('quiz_user_session', JSON.stringify(currentUserSession));
             location.reload();
         }
@@ -360,6 +437,7 @@
             }
         }
 
+        // --- FETCH DATA LOGIC ---
         async function fetchLiveQuiz() {
             const { data, error } = await supabaseClient
                 .from('daily_quiz')
@@ -373,7 +451,7 @@
                 qList.innerHTML = "";
                 data[0].questions.forEach(q => {
                     const li = document.createElement('li');
-                    li.className = "pb-3 border-b border-stone-100 last:border-0 hover:text-red-700 transition-colors";
+                    li.className = "pb-3 border-b border-red-100/50 last:border-0 hover:text-red-700 transition-colors";
                     li.innerText = q;
                     qList.appendChild(li);
                 });
@@ -450,7 +528,7 @@
         }
 
         async function fetchUserFeedback() {
-            if (currentUserSession) {
+            if (currentUserSession && currentUserSession.role === 'user') {
                 document.getElementById('liveFeedbackBlock').innerHTML = `
                     <div class="p-4 bg-red-50 rounded-xl border border-red-100 text-left">
                         <div class="font-bold text-red-700 flex items-center"><span class="mr-2">⏳</span> మార్కులు: ఇంకా ఇవ్వలేదు</div>
@@ -467,17 +545,6 @@
                     fetchCloudLeaderboard();
                 })
                 .subscribe();
-        }
-
-        function toggleViewMode() {
-            const role = document.getElementById('roleSelector').value;
-            if(role === 'user') {
-                document.getElementById('userContainer').classList.remove('hidden');
-                document.getElementById('adminContainer').classList.add('hidden');
-            } else {
-                document.getElementById('adminContainer').classList.remove('hidden');
-                document.getElementById('userContainer').classList.add('hidden');
-            }
         }
 
         window.onload = initLiveApplication;
