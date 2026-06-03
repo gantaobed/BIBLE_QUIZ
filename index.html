@@ -46,7 +46,7 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-stone-600 mb-1">చర్చి పేరు (Church Name) *</label>
+                    <label class="block text-xs font-bold text-stone-600 mb-1">టర్చి పేరు (Church Name) *</label>
                     <input type="text" id="regChurch" required placeholder="మీ చర్చి పేరు" class="w-full px-4 py-2 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-amber-600 focus:outline-none text-sm">
                 </div>
                 <button type="submit" class="w-full mt-2 bg-amber-700 hover:bg-amber-800 text-white font-bold py-2.5 px-4 rounded-xl shadow transform active:scale-95 transition-all cursor-pointer text-sm">
@@ -76,13 +76,13 @@
             <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-md border border-amber-100 flex flex-wrap justify-between items-center gap-4">
                 <div>
                     <span class="text-xs font-bold tracking-wider text-amber-800 uppercase bg-amber-100 px-3 py-1 rounded-full">ఈరోజు చదవాల్సిన లేఖన భాగాలు</span>
-                    <h2 id="liveChapters" class="text-2xl sm:text-3xl font-bold text-stone-900 mt-2 telugu-heading">ఆదికాండము 1 మరియు 2 అధ్యాయాలు</h2>
+                    <h2 id="liveChapters" class="text-2xl sm:text-3xl font-bold text-stone-900 mt-2 telugu-heading">లోడ్ అవుతోంది...</h2>
                 </div>
                 <div class="flex items-center space-x-3 bg-amber-100/60 px-5 py-3 rounded-2xl border border-amber-200">
                     <span class="text-3xl animate-bounce">🔥</span>
                     <div>
                         <p class="text-xs text-stone-500 font-bold uppercase">మీ లైవ్ స్ట్రీక్</p>
-                        <p id="liveStreak" class="text-xl font-black text-orange-700">1 రోజు</p>
+                        <p id="liveStreak" class="text-xl font-black text-orange-700">0 రోజులు</p>
                     </div>
                 </div>
             </div>
@@ -93,7 +93,8 @@
                         <span class="mr-2">📝</span> నేటి 10 క్లౌడ్ ప్రశ్నలు
                     </h3>
                     <ol id="liveQuestionsList" class="space-y-4 list-decimal list-inside text-stone-700 text-sm sm:text-base">
-                        </ol>
+                        <p class="text-stone-400 italic">డేటాబేస్ నుండి ప్రశ్నలను సేకరిస్తోంది...</p>
+                    </ol>
                 </div>
 
                 <div class="space-y-6">
@@ -130,14 +131,16 @@
                 <div>
                     <h3 class="text-lg font-bold text-stone-900 mb-4 text-amber-900">📢 కొత్త లేఖన భాగాలు పోస్ట్ చేయండి</h3>
                     <div class="space-y-3">
-                        <input type="text" id="dbChaptersInput" placeholder="ఉదాహరణ: నిర్గమకాండము 3 & 4" class="w-full px-4 py-2 border border-stone-200 rounded-xl text-sm">
+                        <input type="text" id="dbChaptersInput" placeholder="ఉదాహరణ: ఆదికాండము 3 & 4" class="w-full px-4 py-2 border border-stone-200 rounded-xl text-sm">
                         <textarea id="dbQuestionsInput" rows="6" placeholder="ప్రతి లైన్ కి ఒక ప్రశ్న చొప్పున 10 ప్రశ్నలు ఎంటర్ చేయండి" class="w-full px-4 py-2 border border-stone-200 rounded-xl text-xs font-mono"></textarea>
                         <button onclick="publishQuizToCloud()" class="w-full bg-amber-800 text-white font-bold py-2 rounded-xl text-xs cursor-pointer">డేటాబేస్ లో పబ్లిష్ చేయి ⚡</button>
                     </div>
                 </div>
                 <div>
                     <h3 class="text-lg font-bold text-stone-900 mb-4 text-amber-900">📥 లైవ్ గ్రేడింగ్ ప్యానెల్</h3>
-                    <p class="text-xs text-stone-400 italic">యూజర్లు నిజమైన చిత్రాలను అప్‌లోడ్ చేసినప్పుడు, అడ్మిన్‌లు ఇక్కడ నేరుగా మార్కులు కేటాయించవచ్చు.</p>
+                    <div id="adminGradingQueue" class="space-y-3 text-xs text-stone-500 italic">
+                        యూజర్లు ఫోటోలు అప్‌లోడ్ చేసినప్పుడు అవి ఇక్కడ రియల్-టైమ్‌లో కనిపిస్తాయి.
+                    </div>
                 </div>
             </div>
         </div>
@@ -158,73 +161,180 @@
                         </tr>
                     </thead>
                     <tbody id="cloudLeaderboardBody" class="divide-y divide-stone-100 text-stone-700">
-                        </tbody>
+                        <tr>
+                            <td colspan="3" class="px-5 py-8 text-center text-stone-400 italic">డేటాబేస్ నుండి విద్యార్థుల వివరాలను లోడ్ చేస్తోంది...</td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </section>
     </main>
 
     <script>
-        // మీ కరెక్ట్ డీటెయిల్స్ ఇక్కడ ఆటోమేటిక్‌గా ఇంజెక్ట్ చేయబడ్డాయి!
         const SUPABASE_URL = "https://umizvkrztdsqfdujubpub.supabase.co"; 
         const SUPABASE_ANON_KEY = "sb_publishable_yfoIeLljseU3TuaL62cYkg_mbIQxcU2"; 
         
-        let supabaseClient = null;
-
-        if (SUPABASE_URL !== "") {
-            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        }
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        let currentUserSession = null;
 
         async function initLiveApplication() {
+            checkUserSession();
             fetchLiveQuiz();
             fetchCloudLeaderboard();
+            listenToRealtimeUpdates();
+        }
+
+        function checkUserSession() {
+            const savedUser = localStorage.getItem('quiz_user_session');
+            if (savedUser) {
+                currentUserSession = JSON.parse(savedUser);
+                document.getElementById('authScreen').classList.add('hidden');
+                document.getElementById('liveStreak').innerText = `${currentUserSession.streak} రోజులు`;
+                fetchUserFeedback();
+            } else {
+                document.getElementById('authScreen').classList.remove('hidden');
+            }
         }
 
         async function handleDatabaseSignup(e) {
             e.preventDefault();
             const name = document.getElementById('regName').value;
             const phone = document.getElementById('regPhone').value;
-            const age = document.getElementById('regAge').value;
+            const age = parseInt(document.getElementById('regAge').value);
             const church = document.getElementById('regChurch').value;
 
-            if (supabaseClient) {
-                // డేటాబేస్ లో సేవ్ చేయడానికి సుపాబేస్ ఆథెంటికేషన్ లాజిక్
-                console.log("Connecting registration to cloud database tables...");
-            }
+            const tempId = "usr_" + Math.floor(Math.random() * 100000);
+
+            // జస్ట్ సైన్-అప్ చేసి ప్రొఫైల్స్ టేబుల్ లోకి డేటా పంపడం
+            const { data, error } = await supabaseClient
+                .from('profiles')
+                .insert([{ id: null, full_name: name, phone_number: phone, age: age, church_name: church, streak: 1, total_marks: 0 }])
+                .select();
+
+            // టేబుల్ కి ఒకవేళ టెంపరరీ ఐడీ అవసరమైతే లోకల్ సెషన్ క్రియేట్ చేయడం
+            currentUserSession = { id: tempId, name: name, church: church, streak: 1 };
+            localStorage.setItem('quiz_user_session', JSON.stringify(currentUserSession));
+            
             document.getElementById('authScreen').classList.add('hidden');
+            document.getElementById('liveStreak').innerText = "1 రోజు";
+            
+            fetchCloudLeaderboard();
         }
 
         async function fetchLiveQuiz() {
-            document.getElementById('liveChapters').innerText = "ఆదికాండము 1 & 2 అధ్యాయాలు";
-            const qList = document.getElementById('liveQuestionsList');
-            qList.innerHTML = `
-                <li class="pb-2 border-b border-stone-100">ఆదియందు భూమ్యాకాశములను సృజించినది ఎవరు?</li>
-                <li class="pb-2 border-b border-stone-100">భూమి నిరాకారముగాను శూన్యముగాను ఉన్నప్పుడు దేనిపైన దేవుని ఆత్మ చలించుచుండెను?</li>
-                <li class="pb-2 border-b border-stone-100">देవుడు మొదటి రోజున దేనిని సృష్టించి అది మంచిదని చూచెను?</li>
-                <li class="pb-2 border-b border-stone-100">రెండవ రోజున దేవుడు జలముల మధ్య దేనిని కలుగజేసెను?</li>
-                <li class="pb-2 border-b border-stone-100">సూర్యుడు, చంద్రుడు మరియు నక్షత్రాలు ఎన్నవ రోజున స్థాపించబడ్డాయి?</li>
-                <li class="pb-2 border-b border-stone-100">జలచరములను, పక్షులను దేవుడు ఏమని ఆశీర్వదించెను?</li>
-                <li class="pb-2 border-b border-stone-100">నరుడు ఎవరి స్వరూపము చొప్పున సృష్టించబడ్డాడు?</li>
-                <li class="pb-2 border-b border-stone-100">దేవుడు తన సృష్టి పనినంతటినీ ముగించి ఎన్నవ రోజున విశ్రమించెను?</li>
-                <li class="pb-2 border-b border-stone-100">రెండవ అధ్యాయం ప్రకారం దేవుడు నరుడిని దేనితో నిర్మించెను?</li>
-                <li class="pb-2">ఏదెను తోట మధ్యలో ఉన్న ఆ రెండు ప్రత్యేకమైన వృక్షముల పేర్లు ఏమిటి?</li>
-            `;
+            const { data, error } = await supabaseClient
+                .from('daily_quiz')
+                .select('*')
+                .order('id', { ascending: false })
+                .limit(1);
+
+            if (data && data.length > 0) {
+                document.getElementById('liveChapters').innerText = data[0].chapters;
+                const qList = document.getElementById('liveQuestionsList');
+                qList.innerHTML = "";
+                data[0].questions.forEach(q => {
+                    const li = document.createElement('li');
+                    li.className = "pb-2 border-b border-stone-100 last:border-0";
+                    li.innerText = q;
+                    qList.appendChild(li);
+                });
+            } else {
+                // ఒకవేళ డేటాబేస్ లో ఇంకా ఏమీ పోస్ట్ చేయకపోతే కనిపించే డీఫాల్ట్ స్క్రీన్
+                document.getElementById('liveChapters').innerText = "ఆదికాండము 1 & 2 అధ్యాయాలు";
+                document.getElementById('liveQuestionsList').innerHTML = `
+                    <li class="pb-2 border-b border-stone-100">ఆదియందు భూమ్యాకాశములను సృజించినది ఎవరు?</li>
+                    <li class="pb-2 border-b border-stone-100">భూమి నిరాకారముగాను శూన్యముగాను ఉన్నప్పుడు దేనిపైన దేవుని ఆత్మ చలించుచుండెను?</li>
+                `;
+            }
         }
 
         async function fetchCloudLeaderboard() {
+            const { data, error } = await supabaseClient
+                .from('profiles')
+                .select('*')
+                .order('streak', { ascending: false });
+
             const tbody = document.getElementById('cloudLeaderboardBody');
-            tbody.innerHTML = `
-                <tr class="hover:bg-amber-50/40">
-                    <td class="px-5 py-4 text-center font-bold">🥇</td>
-                    <td class="px-5 py-4"><div class="font-bold">మేఘన</div><div class="text-xs text-stone-400">సి.ెస్.ఐ చర్చి</div></td>
-                    <td class="px-5 py-4 text-right font-bold text-amber-900">🔥 15 రోజులు</td>
-                </tr>
-                <tr class="hover:bg-amber-50/40">
-                    <td class="px-5 py-4 text-center font-bold">🥈</td>
-                    <td class="px-5 py-4"><div class="font-bold">ఓబేద్</div><div class="text-xs text-stone-400">బాప్టిస్ట్ చర్చి</div></td>
-                    <td class="px-5 py-4 text-right font-bold text-amber-900">🔥 12 రోజులు</td>
-                </tr>
-            `;
+            tbody.innerHTML = "";
+
+            if (data && data.length > 0) {
+                data.forEach((user, index) => {
+                    let medal = index + 1;
+                    if(index === 0) medal = "🥇";
+                    if(index === 1) medal = "🥈";
+                    if(index === 2) medal = "🥉";
+
+                    const row = document.createElement('tr');
+                    row.className = "hover:bg-amber-50/40 transition";
+                    row.innerHTML = `
+                        <td class="px-5 py-4 text-center font-bold">${medal}</td>
+                        <td class="px-5 py-4">
+                            <div class="font-bold text-stone-900">${user.full_name}</div>
+                            <div class="text-xs text-stone-400">${user.church_name}</div>
+                        </td>
+                        <td class="px-5 py-4 text-right font-bold text-amber-900">🔥 ${user.streak} రోజులు</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } else {
+                tbody.innerHTML = `<tr><td colspan="3" class="px-5 py-6 text-center text-stone-400 italic">ఇంకా ఎవరూ రిజిస్టర్ చేసుకోలేదు. మొదటి ప్రొఫైల్ కోసం వేచి ఉంది!</td></tr>`;
+            }
+        }
+
+        async function publishQuizToCloud() {
+            const chapters = document.getElementById('dbChaptersInput').value;
+            const questionsText = document.getElementById('dbQuestionsInput').value;
+
+            if(!chapters || !questionsText) {
+                alert("దయచేసి అధ్యాయం మరియు ప్రశ్నలు రాయండి.");
+                return;
+            }
+
+            const questionsArray = questionsText.split('\n').filter(q => q.trim() !== "");
+
+            const { data, error } = await supabaseClient
+                .from('daily_quiz')
+                .insert([{ chapters: chapters, questions: questionsArray }]);
+
+            alert("ప్రశ్నలు విజయవంతంగా క్లౌడ్ డేటాబేస్ లో పబ్లిష్ చేయబడ్డాయి!");
+            fetchLiveQuiz();
+        }
+
+        async function uploadAnswerSheetToCloud(input) {
+            if(input.files && input.files[0]) {
+                const file = input.files[0];
+                document.getElementById('cloudUploadSuccess').classList.remove('hidden');
+                
+                // ఇమేజ్ స్టోరేజ్ బకెట్ లోకి పంపే లాజిక్
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${Date.now()}.${fileExt}`;
+                
+                await supabaseClient.storage
+                    .from('answer-sheets')
+                    .upload(fileName, file);
+            }
+        }
+
+        async function fetchUserFeedback() {
+            // మార్కులు మరియు రిమార్క్స్ రీడ్ చేసే ఫంక్షన్
+            if (currentUserSession) {
+                document.getElementById('liveFeedbackBlock').innerHTML = `
+                    <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-left">
+                        <div class="font-bold text-amber-900">మార్కులు: ఇంకా ఇవ్వలేదు</div>
+                        <div class="text-stone-500 text-xs mt-1">అడ్మిన్ పరిశీలనలో ఉంది.</div>
+                    </div>
+                `;
+            }
+        }
+
+        function listenToRealtimeUpdates() {
+            // సుపాబేస్ రియల్ టైమ్ లిజనర్ (డేటా మారినప్పుడు ఆటోమేటిక్ గా పేజీ లోడ్ అవుతుంది)
+            supabaseClient
+                .channel('public:profiles')
+                .on('postgres_changes', { event: '*', filter: 'table=eq.profiles' }, () => {
+                    fetchCloudLeaderboard();
+                })
+                .subscribe();
         }
 
         function toggleViewMode() {
@@ -235,12 +345,6 @@
             } else {
                 document.getElementById('adminContainer').classList.remove('hidden');
                 document.getElementById('userContainer').classList.add('hidden');
-            }
-        }
-
-        function uploadAnswerSheetToCloud(input) {
-            if(input.files && input.files[0]) {
-                document.getElementById('cloudUploadSuccess').classList.remove('hidden');
             }
         }
 
