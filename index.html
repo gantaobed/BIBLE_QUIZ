@@ -25,11 +25,6 @@
             box-shadow: 0 4px 20px rgba(220, 38, 38, 0.05);
             transition: all 0.3s ease;
         }
-        .red-card:hover {
-            border-color: #fca5a5;
-            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.1);
-            transform: translateY(-2px);
-        }
         .dynamic-input {
             background-color: #f9fafb;
             border: 1px solid #e5e7eb;
@@ -48,9 +43,13 @@
             border: none;
         }
         .red-btn:hover {
-            background: linear-gradient(135deg, #f87171 0%, #dc2626 100%);
             transform: scale(1.02);
             box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+        }
+        .active-tab {
+            background-color: #dc2626;
+            color: white;
+            border-color: #b91c1c;
         }
         .fade-in { animation: fadeInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
         @keyframes fadeInUp {
@@ -156,15 +155,14 @@
 
             <div class="flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-end">
                 <span id="userNameHeader" class="text-xs bg-white text-red-700 px-3 py-1.5 rounded-full font-bold hidden truncate max-w-[120px] shadow-sm">👤</span>
-                
                 <span id="adminBadgeHeader" class="hidden text-[10px] font-black bg-stone-900 text-red-400 px-3 py-1.5 rounded-lg border border-red-900/50 tracking-wider uppercase">ADMIN MODE</span>
-                
                 <button onclick="logoutSession()" class="hidden sm:block text-xs font-bold bg-white/10 text-white hover:bg-white/20 px-4 py-2 rounded-lg border border-white/30 transition cursor-pointer">లాగౌట్</button>
             </div>
         </div>
     </header>
 
     <main class="max-w-6xl mx-auto px-3 sm:px-4 py-6 sm:py-8">
+        
         <div id="userContainer" class="space-y-5 sm:space-y-6 fade-in hidden">
             <div class="red-card p-5 sm:p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white">
                 <div class="w-full sm:w-auto">
@@ -196,14 +194,14 @@
                         </h3>
                         <div class="border-2 border-dashed border-red-300 rounded-xl p-5 text-center bg-red-50/50 hover:bg-red-50 hover:border-red-500 transition duration-300">
                             <input type="file" id="dbImageUpload" class="hidden" accept="image/*" onchange="uploadAnswerSheetToCloud(this)">
-                            <label for="dbImageUpload" class="cursor-pointer block w-full h-full">
+                            <label for="dbImageUpload" class="cursor-pointer block w-full h-full" id="uploadLabel">
                                 <span class="text-3xl block mb-2 transition-transform hover:scale-110">📤</span>
                                 <span class="text-sm font-bold text-stone-600 block">ఫోటో ఎంచుకోండి</span>
                                 <span class="text-[10px] text-stone-400 mt-1 block">Maximum 5MB</span>
                             </label>
                         </div>
                         <div id="cloudUploadSuccess" class="hidden mt-3 text-center p-2.5 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-lg text-xs font-bold fade-in">
-                            ✓ చిత్రం విజయవంతంగా అప్‌లోడ్ అయింది!
+                            ✓ చిత్రం అప్‌లోడ్ అయింది! అడ్మిన్ మార్కుల కోసం వేచి ఉంది.
                         </div>
                     </div>
 
@@ -212,7 +210,7 @@
                             <span class="mr-2">🎖️</span> లైవ్ మార్కులు
                         </h3>
                         <div id="liveFeedbackBlock" class="text-stone-500 text-xs italic py-3 text-center bg-stone-50 rounded-xl border border-stone-200">
-                            దిద్దిన తర్వాత మార్కులు ఇక్కడ కనిపిస్తాయి.
+                            దిద్దిన తర్వాత మీ రియల్-టైమ్ గ్రేడ్ ఇక్కడ కనిపిస్తుంది.
                         </div>
                     </div>
                 </div>
@@ -220,19 +218,24 @@
         </div>
 
         <div id="adminContainer" class="space-y-5 sm:space-y-6 hidden fade-in">
-            <div class="red-card p-5 sm:p-6 grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 bg-stone-50">
-                <div>
-                    <h3 class="text-sm sm:text-base font-bold text-red-700 mb-4 flex items-center"><span class="mr-2">📢</span> కొత్త లేఖన భాగాలు పోస్ట్ చేయండి</h3>
-                    <div class="space-y-4">
-                        <input type="text" id="dbChaptersInput" placeholder="ఉదా: ఆదికాండము 3 & 4" class="w-full px-4 py-3 dynamic-input rounded-xl text-sm">
-                        <textarea id="dbQuestionsInput" rows="7" placeholder="ప్రతి లైన్ కి ఒక ప్రశ్న చొప్పున 10 ప్రశ్నలు ఎంటర్ చేయండి..." class="w-full px-4 py-3 dynamic-input rounded-xl text-xs sm:text-sm leading-relaxed resize-y"></textarea>
-                        <button onclick="publishQuizToCloud()" class="w-full red-btn text-white font-bold py-3.5 rounded-xl text-sm transition-all cursor-pointer shadow-md active:scale-95">డేటాబేస్ లో పబ్లిష్ చేయి ⚡</button>
-                    </div>
+            <div class="red-card p-5 sm:p-6 bg-stone-50 mb-6">
+                <h3 class="text-sm sm:text-base font-bold text-red-700 mb-4 flex items-center"><span class="mr-2">📢</span> కొత్త లేఖన భాగాలు పోస్ట్ చేయండి</h3>
+                <div class="space-y-4 max-w-2xl">
+                    <input type="text" id="dbChaptersInput" placeholder="ఉదా: ఆదికాండము 3 & 4" class="w-full px-4 py-3 dynamic-input rounded-xl text-sm">
+                    <textarea id="dbQuestionsInput" rows="5" placeholder="ప్రతి లైన్ కి ఒక ప్రశ్న చొప్పున 10 ప్రశ్నలు ఎంటర్ చేయండి..." class="w-full px-4 py-3 dynamic-input rounded-xl text-xs sm:text-sm leading-relaxed resize-y"></textarea>
+                    <button onclick="publishQuizToCloud()" class="w-full sm:w-auto px-8 red-btn text-white font-bold py-3 rounded-xl text-sm transition-all cursor-pointer shadow-md active:scale-95">ప్రశ్నలను పబ్లిష్ చేయి ⚡</button>
                 </div>
-                <div>
-                    <h3 class="text-sm sm:text-base font-bold text-red-700 mb-4 flex items-center"><span class="mr-2">📥</span> లైవ్ గ్రేడింగ్ క్యూ</h3>
-                    <div id="adminGradingQueue" class="text-xs sm:text-sm text-stone-500 p-4 border border-stone-200 rounded-xl bg-white flex items-center justify-center min-h-[150px] text-center italic shadow-inner">
-                        యూజర్లు ఫోటోలు అప్‌లోడ్ చేసినప్పుడు అవి ఇక్కడ కనిపిస్తాయి.
+            </div>
+
+            <div class="red-card p-5 sm:p-6">
+                <div class="flex justify-between items-center mb-5 border-b border-red-100 pb-3">
+                    <h3 class="text-sm sm:text-base font-bold text-red-700 flex items-center"><span class="mr-2">📥</span> జవాబు పత్రాల క్యూ (Grading Queue)</h3>
+                    <button onclick="fetchAdminGradingQueue()" class="text-xs bg-stone-200 hover:bg-stone-300 text-stone-700 px-3 py-1.5 rounded-lg font-bold transition">రీఫ్రెష్ 🔄</button>
+                </div>
+                
+                <div id="adminGradingQueue" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="col-span-full text-center text-stone-400 py-8 italic text-sm">
+                        లోడ్ అవుతోంది లేదా ప్రస్తుతం దిద్దడానికి పేపర్లు ఏమీ లేవు.
                     </div>
                 </div>
             </div>
@@ -241,10 +244,18 @@
         <hr class="border-red-200 my-8 sm:my-10">
         <section class="max-w-3xl mx-auto space-y-4 sm:space-y-6 fade-in">
             <div class="text-center px-2">
-                <h2 class="text-xl sm:text-2xl font-bold text-red-800 eng-heading">Community Leaderboard</h2>
-                <p class="text-[10px] sm:text-xs text-stone-500 mt-1">డేటాబేస్ నుండి రియల్-టైమ్ ర్యాంకులు</p>
+                <h2 class="text-xl sm:text-2xl font-bold text-red-800 eng-heading">Community Leaderboards</h2>
             </div>
             
+            <div class="flex justify-center space-x-2 sm:space-x-4 mb-4">
+                <button id="tabStreak" onclick="switchLeaderboardTab('streak')" class="px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold border border-red-200 text-stone-600 transition-all cursor-pointer active-tab shadow-sm">
+                    🔥 Daily Streaks
+                </button>
+                <button id="tabMarks" onclick="switchLeaderboardTab('marks')" class="px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold border border-red-200 text-stone-600 hover:bg-red-50 transition-all cursor-pointer shadow-sm">
+                    🏆 Highest Marks
+                </button>
+            </div>
+
             <div class="red-card overflow-hidden">
                 <div class="w-full overflow-x-auto hide-scroll">
                     <table class="w-full text-left border-collapse min-w-[400px]">
@@ -252,7 +263,7 @@
                             <tr class="bg-red-50 border-b border-red-100 text-red-700 text-[10px] sm:text-xs tracking-wider uppercase">
                                 <th class="px-4 sm:px-6 py-4 w-16 text-center font-bold">Rank</th>
                                 <th class="px-4 sm:px-6 py-4 font-bold">Student Name & Church</th>
-                                <th class="px-4 sm:px-6 py-4 text-right font-bold w-28 sm:w-32">Streak</th>
+                                <th id="leaderboardMetricHeader" class="px-4 sm:px-6 py-4 text-right font-bold w-28 sm:w-32">Streak</th>
                             </tr>
                         </thead>
                         <tbody id="cloudLeaderboardBody" class="divide-y divide-stone-100 text-stone-700 text-xs sm:text-sm bg-white">
@@ -273,8 +284,8 @@
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         let currentUserSession = null;
         let temporaryCheckedPhone = "";
+        let currentLeaderboardMetric = 'streak'; 
 
-        // --- 3 ADMIN CREDENTIALS ---
         const VALID_ADMINS = [
             { id: "obed", pass: "obed123" },
             { id: "jayaraju", pass: "jayaraju123" },
@@ -294,14 +305,13 @@
                 currentUserSession = JSON.parse(savedUser);
                 document.getElementById('authScreen').classList.add('hidden');
                 
-                // అడ్మిన్ లాగిన్ అయి ఉన్నాడా అని చెక్ చేయడం
                 if(currentUserSession.role === 'admin') {
                     document.getElementById('adminContainer').classList.remove('hidden');
                     document.getElementById('userContainer').classList.add('hidden');
                     document.getElementById('adminBadgeHeader').classList.remove('hidden');
                     document.getElementById('userNameHeader').classList.add('hidden');
+                    fetchAdminGradingQueue(); // Load Queue for Admin
                 } else {
-                    // సాధారణ యూజర్ లాగిన్
                     document.getElementById('userContainer').classList.remove('hidden');
                     document.getElementById('adminContainer').classList.add('hidden');
                     document.getElementById('liveStreak').innerText = `${currentUserSession.streak} రోజులు`;
@@ -311,74 +321,48 @@
                     headerName.innerText = `👤 ${shortName}`;
                     headerName.classList.remove('hidden');
                     
-                    fetchUserFeedback();
+                    fetchUserFeedback(); // Load real feedback for user
                 }
             } else {
                 document.getElementById('authScreen').classList.remove('hidden');
-                document.getElementById('userContainer').classList.add('hidden');
-                document.getElementById('adminContainer').classList.add('hidden');
             }
         }
 
-        // --- ADMIN LOGIN LOGIC ---
+        // --- AUTH LOGIC ---
         function openAdminLoginModal() {
             document.getElementById('adminLoginModal').classList.remove('hidden');
             document.getElementById('adminLoginError').classList.add('hidden');
         }
-
-        function closeAdminLoginModal() {
-            document.getElementById('adminLoginModal').classList.add('hidden');
-        }
+        function closeAdminLoginModal() { document.getElementById('adminLoginModal').classList.add('hidden'); }
 
         function verifyAdminCredentials(e) {
             e.preventDefault();
             const idInput = document.getElementById('adminIdInput').value.trim();
             const passInput = document.getElementById('adminPassInput').value.trim();
-            const errorBox = document.getElementById('adminLoginError');
-
-            // 3 అడ్మిన్లలో ఎవరైనా మ్యాచ్ అయ్యారా?
             const matchedAdmin = VALID_ADMINS.find(admin => admin.id === idInput && admin.pass === passInput);
 
             if (matchedAdmin) {
-                // సక్సెస్: అడ్మిన్ సెషన్ సేవ్ చేయి
                 currentUserSession = { id: matchedAdmin.id, name: "Admin", role: 'admin', streak: 0 };
                 localStorage.setItem('quiz_user_session', JSON.stringify(currentUserSession));
-                closeAdminLoginModal();
                 location.reload();
             } else {
-                // ఫెయిల్: ఎర్రర్ చూపించు
-                errorBox.classList.remove('hidden');
+                document.getElementById('adminLoginError').classList.remove('hidden');
                 document.getElementById('adminPassInput').value = "";
             }
         }
 
-        // --- USER LOGIN LOGIC ---
         async function checkMobileNumber(e) {
             e.preventDefault();
             const phone = document.getElementById('loginPhone').value.trim();
             const btn = e.target.querySelector('button[type="submit"]');
-            
-            btn.innerHTML = "వెతుకుతోంది...";
-            btn.disabled = true;
-            btn.classList.add('opacity-70');
-
+            btn.innerHTML = "వెతుకుతోంది..."; btn.disabled = true;
             temporaryCheckedPhone = phone;
 
             try {
-                const { data, error } = await supabaseClient
-                    .from('profiles')
-                    .select('*')
-                    .eq('phone_number', phone);
-
+                const { data, error } = await supabaseClient.from('profiles').select('*').eq('phone_number', phone);
                 if (data && data.length > 0) {
-                    const existingUser = data[0];
-                    currentUserSession = { 
-                        id: existingUser.id, 
-                        name: existingUser.full_name, 
-                        church: existingUser.church_name, 
-                        streak: existingUser.streak,
-                        role: 'user'
-                    };
+                    const u = data[0];
+                    currentUserSession = { id: u.id, name: u.full_name, church: u.church_name, streak: u.streak, role: 'user' };
                     localStorage.setItem('quiz_user_session', JSON.stringify(currentUserSession));
                     location.reload(); 
                 } else {
@@ -387,10 +371,8 @@
                     btn.innerHTML = "కొత్త ఖాతా";
                 }
             } catch (err) {
-                alert("నెట్‌వర్క్ లోపం దయచేసి మళ్ళీ ప్రయత్నించండి.");
-                btn.innerHTML = "ముందుకు సాగండి &rarr;";
-                btn.disabled = false;
-                btn.classList.remove('opacity-70');
+                alert("నెట్‌వర్క్ లోపం. మళ్ళీ ప్రయత్నించండి.");
+                btn.innerHTML = "ముందుకు సాగండి &rarr;"; btn.disabled = false;
             }
         }
 
@@ -400,32 +382,18 @@
             const age = parseInt(document.getElementById('regAge').value);
             const church = document.getElementById('regChurch').value.trim();
             const btn = e.target.querySelector('button[type="submit"]');
+            btn.innerHTML = "సృష్టించబడుతోంది..."; btn.disabled = true;
 
-            btn.innerHTML = "ఖాతా సృష్టించబడుతోంది...";
-            btn.disabled = true;
-
-            const { data, error } = await supabaseClient
-                .from('profiles')
-                .insert([{ 
-                    full_name: name, 
-                    phone_number: temporaryCheckedPhone, 
-                    age: age, 
-                    church_name: church, 
-                    streak: 1, 
-                    total_marks: 0 
-                }])
-                .select();
+            const { data, error } = await supabaseClient.from('profiles').insert([{ 
+                full_name: name, phone_number: temporaryCheckedPhone, age: age, church_name: church 
+            }]).select();
 
             if (error) {
-                console.error("Supabase Error:", error);
-                alert("లోపం దొర్లింది: " + error.message);
-                btn.innerHTML = "రిజిస్ట్రేషన్ పూర్తి చేయండి ✓";
-                btn.disabled = false;
-                return;
+                alert("లోపం: " + error.message);
+                btn.innerHTML = "రిజిస్ట్రేషన్ పూర్తి చేయండి ✓"; btn.disabled = false; return;
             }
 
-            const registeredUser = data[0];
-            currentUserSession = { id: registeredUser.id, name: name, church: church, streak: 1, role: 'user' };
+            currentUserSession = { id: data[0].id, name: name, church: church, streak: 1, role: 'user' };
             localStorage.setItem('quiz_user_session', JSON.stringify(currentUserSession));
             location.reload();
         }
@@ -437,14 +405,9 @@
             }
         }
 
-        // --- FETCH DATA LOGIC ---
+        // --- CORE FEATURES ---
         async function fetchLiveQuiz() {
-            const { data, error } = await supabaseClient
-                .from('daily_quiz')
-                .select('*')
-                .order('id', { ascending: false })
-                .limit(1);
-
+            const { data } = await supabaseClient.from('daily_quiz').select('*').order('id', { ascending: false }).limit(1);
             if (data && data.length > 0) {
                 document.getElementById('liveChapters').innerText = data[0].chapters;
                 const qList = document.getElementById('liveQuestionsList');
@@ -455,16 +418,172 @@
                     li.innerText = q;
                     qList.appendChild(li);
                 });
-            } else {
-                document.getElementById('liveChapters').innerText = "ఆదికాండము 1 & 2 అధ్యాయాలు";
             }
         }
 
-        async function fetchCloudLeaderboard() {
+        async function publishQuizToCloud() {
+            const chapters = document.getElementById('dbChaptersInput').value;
+            const questionsText = document.getElementById('dbQuestionsInput').value;
+            if(!chapters || !questionsText) { alert("దయచేసి అన్ని వివరాలు పూరించండి."); return; }
+            const questionsArray = questionsText.split('\n').filter(q => q.trim() !== "");
+
+            await supabaseClient.from('daily_quiz').insert([{ chapters: chapters, questions: questionsArray }]);
+            alert("ప్రశ్నలు పబ్లిష్ చేయబడ్డాయి!");
+            document.getElementById('dbChaptersInput').value = ""; document.getElementById('dbQuestionsInput').value = "";
+            fetchLiveQuiz();
+        }
+
+        // ================= NEW: UPLOAD LOGIC FIX =================
+        async function uploadAnswerSheetToCloud(input) {
+            if(!currentUserSession || currentUserSession.role !== 'user') return;
+            
+            if(input.files && input.files[0]) {
+                const file = input.files[0];
+                const label = document.getElementById('uploadLabel');
+                label.innerHTML = `<span class="text-2xl block mb-2 animate-spin">⏳</span><span class="text-sm font-bold text-stone-600 block">అప్‌లోడ్ అవుతోంది...</span>`;
+                
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${currentUserSession.id}_${Date.now()}.${fileExt}`;
+
+                // 1. Upload to Storage
+                const { data: storageData, error: storageError } = await supabaseClient.storage
+                    .from('answer-sheets')
+                    .upload(fileName, file);
+
+                if(storageError) {
+                    alert("ఫోటో అప్‌లోడ్ ఫెయిల్ అయింది.");
+                    label.innerHTML = `<span class="text-3xl block mb-2">📤</span><span class="text-sm font-bold text-stone-600 block">మళ్ళీ ప్రయత్నించండి</span>`;
+                    return;
+                }
+
+                // 2. Insert into Submissions Table so Admin can see it
+                await supabaseClient.from('submissions').insert([{
+                    user_id: currentUserSession.id,
+                    image_url: fileName
+                }]);
+
+                document.getElementById('cloudUploadSuccess').classList.remove('hidden');
+                label.innerHTML = `<span class="text-3xl block mb-2 text-emerald-600">✅</span><span class="text-sm font-bold text-stone-600 block">సక్సెస్!</span>`;
+            }
+        }
+
+        // ================= NEW: ADMIN GRADING QUEUE =================
+        async function fetchAdminGradingQueue() {
+            const queueContainer = document.getElementById('adminGradingQueue');
+            queueContainer.innerHTML = `<div class="col-span-full text-center text-stone-500 py-4 text-sm animate-pulse">జవాబు పత్రాల కోసం వెతుకుతోంది...</div>`;
+
+            // Fetch submissions where marks are null
             const { data, error } = await supabaseClient
+                .from('submissions')
+                .select(`id, image_url, submitted_at, user_id, profiles (full_name, church_name, streak, total_marks)`)
+                .is('marks', null)
+                .order('submitted_at', { ascending: true });
+
+            if(error || !data || data.length === 0) {
+                queueContainer.innerHTML = `<div class="col-span-full text-center text-stone-400 py-8 italic text-sm border-2 border-dashed border-stone-200 rounded-xl">ప్రస్తుతం దిద్దడానికి పేపర్లు ఏమీ లేవు. అన్నీ పూర్తయ్యాయి! 🎉</div>`;
+                return;
+            }
+
+            queueContainer.innerHTML = ""; // Clear loader
+            
+            data.forEach(sub => {
+                const imageUrl = supabaseClient.storage.from('answer-sheets').getPublicUrl(sub.image_url).data.publicUrl;
+                
+                const card = document.createElement('div');
+                card.className = "bg-white border border-stone-200 rounded-xl p-4 shadow-sm hover:shadow-md transition";
+                card.innerHTML = `
+                    <div class="mb-3">
+                        <div class="font-bold text-stone-800 text-sm truncate">${sub.profiles.full_name}</div>
+                        <div class="text-[10px] text-stone-500 font-semibold uppercase">${sub.profiles.church_name}</div>
+                    </div>
+                    <div class="w-full h-32 bg-stone-100 rounded-lg mb-3 overflow-hidden flex items-center justify-center border border-stone-200">
+                        <a href="${imageUrl}" target="_blank" class="w-full h-full block">
+                            <img src="${imageUrl}" class="w-full h-full object-cover opacity-90 hover:opacity-100 transition" alt="Answer Sheet">
+                        </a>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex items-center space-x-2">
+                            <input type="number" id="marks_${sub.id}" min="0" max="10" placeholder="Marks (0-10)" class="w-1/3 px-2 py-1.5 text-sm border border-stone-300 rounded focus:border-red-500 outline-none text-center font-bold">
+                            <input type="text" id="remarks_${sub.id}" placeholder="Remarks (optional)" class="w-2/3 px-2 py-1.5 text-xs border border-stone-300 rounded focus:border-red-500 outline-none">
+                        </div>
+                        <button onclick="submitGrade(${sub.id}, '${sub.user_id}', ${sub.profiles.total_marks}, ${sub.profiles.streak})" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 rounded transition shadow-sm">గ్రేడ్ సబ్మిట్ చేయి ✓</button>
+                    </div>
+                `;
+                queueContainer.appendChild(card);
+            });
+        }
+
+        async function submitGrade(submissionId, userId, currentTotalMarks, currentStreak) {
+            const marksGiven = parseInt(document.getElementById(`marks_${submissionId}`).value);
+            const remarks = document.getElementById(`remarks_${submissionId}`).value || "బాగా రాశారు!";
+
+            if(isNaN(marksGiven) || marksGiven < 0 || marksGiven > 10) {
+                alert("దయచేసి 0 నుండి 10 మధ్య సరైన మార్కులు వేయండి."); return;
+            }
+
+            // 1. Update Submissions table
+            await supabaseClient.from('submissions').update({ marks: marksGiven, remarks: remarks }).eq('id', submissionId);
+
+            // 2. Update Profiles table (Add to total marks & increase streak)
+            await supabaseClient.from('profiles').update({ 
+                total_marks: currentTotalMarks + marksGiven,
+                streak: currentStreak + 1
+            }).eq('id', userId);
+
+            alert("మార్కులు సక్సెస్ ఫుల్ గా సబ్మిట్ అయ్యాయి!");
+            fetchAdminGradingQueue(); // Refresh Queue
+        }
+
+        async function fetchUserFeedback() {
+            if (currentUserSession && currentUserSession.role === 'user') {
+                const { data } = await supabaseClient.from('submissions').select('*').eq('user_id', currentUserSession.id).order('submitted_at', { ascending: false }).limit(1);
+                
+                const feedbackBlock = document.getElementById('liveFeedbackBlock');
+                if(data && data.length > 0) {
+                    const latest = data[0];
+                    if(latest.marks !== null) {
+                        feedbackBlock.innerHTML = `
+                            <div class="p-4 bg-emerald-50 rounded-xl border border-emerald-200 text-left">
+                                <div class="font-bold text-emerald-700 flex justify-between items-center">
+                                    <span>✅ స్కోర్:</span>
+                                    <span class="text-xl">${latest.marks} / 10</span>
+                                </div>
+                                <div class="text-stone-700 text-xs mt-2 font-medium bg-white p-2 rounded border border-emerald-100">"${latest.remarks}"</div>
+                            </div>
+                        `;
+                    } else {
+                        feedbackBlock.innerHTML = `<div class="p-4 bg-amber-50 rounded-xl border border-amber-200 text-left"><div class="font-bold text-amber-700">⏳ అడ్మిన్ పరిశీలనలో ఉంది...</div></div>`;
+                    }
+                } else {
+                    feedbackBlock.innerHTML = `<div class="p-4 bg-stone-50 rounded-xl border border-stone-200 text-left text-xs text-stone-500">మీరు ఇంకా ఈరోజు జవాబులు అప్‌లోడ్ చేయలేదు.</div>`;
+                }
+            }
+        }
+
+        // ================= NEW: DUAL LEADERBOARD LOGIC =================
+        function switchLeaderboardTab(metric) {
+            currentLeaderboardMetric = metric;
+            document.getElementById('tabStreak').classList.remove('active-tab', 'bg-red-50');
+            document.getElementById('tabMarks').classList.remove('active-tab', 'bg-red-50');
+            
+            if(metric === 'streak') {
+                document.getElementById('tabStreak').classList.add('active-tab');
+                document.getElementById('leaderboardMetricHeader').innerText = "Streak";
+            } else {
+                document.getElementById('tabMarks').classList.add('active-tab');
+                document.getElementById('leaderboardMetricHeader').innerText = "Total Marks";
+            }
+            fetchCloudLeaderboard();
+        }
+
+        async function fetchCloudLeaderboard() {
+            const orderByColumn = currentLeaderboardMetric === 'streak' ? 'streak' : 'total_marks';
+            
+            const { data } = await supabaseClient
                 .from('profiles')
                 .select('*')
-                .order('streak', { ascending: false });
+                .order(orderByColumn, { ascending: false })
+                .limit(20);
 
             const tbody = document.getElementById('cloudLeaderboardBody');
             tbody.innerHTML = "";
@@ -477,6 +596,7 @@
                     if(index === 2) rankBadge = `<span class="text-xl">🥉</span>`;
 
                     const isMe = (currentUserSession && currentUserSession.id === user.id) ? "bg-red-50/50" : "";
+                    const metricValue = currentLeaderboardMetric === 'streak' ? `🔥 ${user.streak}` : `⭐ ${user.total_marks}`;
 
                     const row = document.createElement('tr');
                     row.className = `hover:bg-red-50/80 transition-colors ${isMe}`;
@@ -487,64 +607,19 @@
                             <div class="text-[10px] sm:text-xs text-stone-500 mt-1 uppercase font-semibold">${user.church_name}</div>
                         </td>
                         <td class="px-4 sm:px-6 py-4 text-right font-bold text-red-600 align-middle text-sm sm:text-base">
-                            🔥 ${user.streak}
+                            ${metricValue}
                         </td>
                     `;
                     tbody.appendChild(row);
                 });
             } else {
-                tbody.innerHTML = `<tr><td colspan="3" class="px-4 py-8 text-center text-stone-400 text-xs sm:text-sm">ఇంకా ఎవరూ రిజిస్టర్ చేసుకోలేదు.</td></tr>`;
-            }
-        }
-
-        async function publishQuizToCloud() {
-            const chapters = document.getElementById('dbChaptersInput').value;
-            const questionsText = document.getElementById('dbQuestionsInput').value;
-
-            if(!chapters || !questionsText) {
-                alert("దయచేసి అన్ని వివరాలు పూరించండి.");
-                return;
-            }
-
-            const questionsArray = questionsText.split('\n').filter(q => q.trim() !== "");
-
-            await supabaseClient
-                .from('daily_quiz')
-                .insert([{ chapters: chapters, questions: questionsArray }]);
-
-            alert("ప్రశ్నలు పబ్లిష్ చేయబడ్డాయి!");
-            document.getElementById('dbChaptersInput').value = "";
-            document.getElementById('dbQuestionsInput').value = "";
-            fetchLiveQuiz();
-        }
-
-        async function uploadAnswerSheetToCloud(input) {
-            if(input.files && input.files[0]) {
-                document.getElementById('cloudUploadSuccess').classList.remove('hidden');
-                setTimeout(() => {
-                    document.getElementById('cloudUploadSuccess').classList.add('hidden');
-                }, 4000);
-            }
-        }
-
-        async function fetchUserFeedback() {
-            if (currentUserSession && currentUserSession.role === 'user') {
-                document.getElementById('liveFeedbackBlock').innerHTML = `
-                    <div class="p-4 bg-red-50 rounded-xl border border-red-100 text-left">
-                        <div class="font-bold text-red-700 flex items-center"><span class="mr-2">⏳</span> మార్కులు: ఇంకా ఇవ్వలేదు</div>
-                        <div class="text-stone-600 text-xs mt-2 leading-relaxed">అడ్మిన్ పరిశీలనలో ఉంది. మార్కులు వేయగానే ఇక్కడ అప్‌డేట్ అవుతుంది.</div>
-                    </div>
-                `;
+                tbody.innerHTML = `<tr><td colspan="3" class="px-4 py-8 text-center text-stone-400 text-xs sm:text-sm">ఇంకా డేటా లేదు.</td></tr>`;
             }
         }
 
         function listenToRealtimeUpdates() {
-            supabaseClient
-                .channel('public:profiles')
-                .on('postgres_changes', { event: '*', filter: 'table=eq.profiles' }, () => {
-                    fetchCloudLeaderboard();
-                })
-                .subscribe();
+            supabaseClient.channel('public:profiles').on('postgres_changes', { event: '*', filter: 'table=eq.profiles' }, () => { fetchCloudLeaderboard(); }).subscribe();
+            supabaseClient.channel('public:submissions').on('postgres_changes', { event: '*', filter: 'table=eq.submissions' }, () => { fetchAdminGradingQueue(); fetchUserFeedback(); }).subscribe();
         }
 
         window.onload = initLiveApplication;
