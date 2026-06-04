@@ -4,11 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Daily Bible Quiz</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#b91c1c">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3073/3073428.png">
+
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Noto+Sans+Telugu:wght@400;600;700&display=swap" rel="stylesheet">
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      OneSignalDeferred.push(async function(OneSignal) {
+        await OneSignal.init({
+          appId: "a7720d9c-21be-410f-b72e-d14ab1454ad7", // Your App ID from screenshot
+        });
+      });
+    </script>
     
     <style>
         body {
@@ -181,7 +197,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-6">
                 <div class="lg:col-span-2 red-card p-5 sm:p-6">
                     <h3 class="text-base sm:text-lg font-bold text-red-700 mb-4 sm:mb-5 flex items-center border-b border-red-100 pb-3">
-                        <span class="mr-2">📝</span> నేటి 10 ప్రశ్నలు
+                        <span class="mr-2">📝</span> నేటి 5 ప్రశ్నలు
                     </h3>
                     <ol id="liveQuestionsList" class="space-y-3 sm:space-y-4 list-decimal list-outside ml-4 text-stone-700 text-sm sm:text-base leading-relaxed font-medium">
                         </ol>
@@ -230,7 +246,7 @@
             <div class="red-card p-5 sm:p-6">
                 <div class="flex justify-between items-center mb-5 border-b border-red-100 pb-3">
                     <h3 class="text-sm sm:text-base font-bold text-red-700 flex items-center"><span class="mr-2">📥</span> జవాబు పత్రాల క్యూ (Grading Queue)</h3>
-                    <button onclick="fetchAdminGradingQueue()" class="text-xs bg-stone-200 hover:bg-stone-300 text-stone-700 px-3 py-1.5 rounded-lg font-bold transition">రీఫ్రెష్ 🔄</button>
+                    <button onclick="fetchAdminGradingQueue()" class="text-xs bg-stone-200 hover:bg-stone-300 text-stone-700 px-3 py-1.5 rounded-lg font-bold transition cursor-pointer">రీఫ్రెష్ 🔄</button>
                 </div>
                 
                 <div id="adminGradingQueue" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -278,8 +294,21 @@
     </main>
 
     <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(() => console.log('PWA Service Worker Registered!'))
+                    .catch(err => console.log('Service Worker Error', err));
+            });
+        }
+    </script>
+
+    <script>
         const SUPABASE_URL = "https://umizvkrztgsdfujubpub.supabase.co"; 
         const SUPABASE_ANON_KEY = "sb_publishable_yfoIeLljseU3TuaL62cYkg_mbIQxcU2"; 
+        
+        // ⚠️ మీ OneSignal REST API Key ని ఇక్కడ పేస్ట్ చేయండి!
+        const ONESIGNAL_REST_API_KEY = "YOUR_REST_API_KEY"; 
         
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         let currentUserSession = null;
@@ -310,7 +339,7 @@
                     document.getElementById('userContainer').classList.add('hidden');
                     document.getElementById('adminBadgeHeader').classList.remove('hidden');
                     document.getElementById('userNameHeader').classList.add('hidden');
-                    fetchAdminGradingQueue(); // Load Queue for Admin
+                    fetchAdminGradingQueue();
                 } else {
                     document.getElementById('userContainer').classList.remove('hidden');
                     document.getElementById('adminContainer').classList.add('hidden');
@@ -321,14 +350,18 @@
                     headerName.innerText = `👤 ${shortName}`;
                     headerName.classList.remove('hidden');
                     
-                    fetchUserFeedback(); // Load real feedback for user
+                    // OneSignal కి యూజర్ ID ని లింక్ చేయడం
+                    OneSignalDeferred.push(function(OneSignal) {
+                        OneSignal.login(currentUserSession.id); 
+                    });
+
+                    fetchUserFeedback();
                 }
             } else {
                 document.getElementById('authScreen').classList.remove('hidden');
             }
         }
 
-        // --- AUTH LOGIC ---
         function openAdminLoginModal() {
             document.getElementById('adminLoginModal').classList.remove('hidden');
             document.getElementById('adminLoginError').classList.add('hidden');
@@ -401,11 +434,16 @@
         function logoutSession() {
             if(confirm("మీరు లాగౌట్ అవ్వాలనుకుంటున్నారా?")) {
                 localStorage.removeItem('quiz_user_session');
+                
+                // OneSignal నుండి లాగౌట్ చేయడం
+                OneSignalDeferred.push(function(OneSignal) {
+                    OneSignal.logout();
+                });
+
                 location.reload();
             }
         }
 
-        // --- CORE FEATURES ---
         async function fetchLiveQuiz() {
             const { data } = await supabaseClient.from('daily_quiz').select('*').order('id', { ascending: false }).limit(1);
             if (data && data.length > 0) {
@@ -428,12 +466,27 @@
             const questionsArray = questionsText.split('\n').filter(q => q.trim() !== "");
 
             await supabaseClient.from('daily_quiz').insert([{ chapters: chapters, questions: questionsArray }]);
+            
+            // అందరికీ నోటిఫికేషన్ పంపడం (All Users)
+            fetch("https://onesignal.com/api/v1/notifications", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Basic ${ONESIGNAL_REST_API_KEY}`
+                },
+                body: JSON.stringify({
+                    app_id: "a7720d9c-21be-410f-b72e-d14ab1454ad7",
+                    included_segments: ["Total Subscriptions"],
+                    headings: { "en": "కొత్త ప్రశ్నలు వచ్చాయి! 📖" },
+                    contents: { "en": "ఈరోజు క్విజ్ ప్రశ్నలు అప్‌డేట్ అయ్యాయి. వెంటనే యాప్ ఓపెన్ చేసి జవాబులు రాయండి!" }
+                })
+            }).catch(e => console.log("Push error:", e));
+
             alert("ప్రశ్నలు పబ్లిష్ చేయబడ్డాయి!");
             document.getElementById('dbChaptersInput').value = ""; document.getElementById('dbQuestionsInput').value = "";
             fetchLiveQuiz();
         }
 
-        // ================= NEW: UPLOAD LOGIC FIX =================
         async function uploadAnswerSheetToCloud(input) {
             if(!currentUserSession || currentUserSession.role !== 'user') return;
             
@@ -445,7 +498,6 @@
                 const fileExt = file.name.split('.').pop();
                 const fileName = `${currentUserSession.id}_${Date.now()}.${fileExt}`;
 
-                // 1. Upload to Storage
                 const { data: storageData, error: storageError } = await supabaseClient.storage
                     .from('answer-sheets')
                     .upload(fileName, file);
@@ -456,7 +508,6 @@
                     return;
                 }
 
-                // 2. Insert into Submissions Table so Admin can see it
                 await supabaseClient.from('submissions').insert([{
                     user_id: currentUserSession.id,
                     image_url: fileName
@@ -467,12 +518,10 @@
             }
         }
 
-        // ================= NEW: ADMIN GRADING QUEUE =================
         async function fetchAdminGradingQueue() {
             const queueContainer = document.getElementById('adminGradingQueue');
             queueContainer.innerHTML = `<div class="col-span-full text-center text-stone-500 py-4 text-sm animate-pulse">జవాబు పత్రాల కోసం వెతుకుతోంది...</div>`;
 
-            // Fetch submissions where marks are null
             const { data, error } = await supabaseClient
                 .from('submissions')
                 .select(`id, image_url, submitted_at, user_id, profiles (full_name, church_name, streak, total_marks)`)
@@ -484,7 +533,7 @@
                 return;
             }
 
-            queueContainer.innerHTML = ""; // Clear loader
+            queueContainer.innerHTML = "";
             
             data.forEach(sub => {
                 const imageUrl = supabaseClient.storage.from('answer-sheets').getPublicUrl(sub.image_url).data.publicUrl;
@@ -506,7 +555,7 @@
                             <input type="number" id="marks_${sub.id}" min="0" max="10" placeholder="Marks (0-10)" class="w-1/3 px-2 py-1.5 text-sm border border-stone-300 rounded focus:border-red-500 outline-none text-center font-bold">
                             <input type="text" id="remarks_${sub.id}" placeholder="Remarks (optional)" class="w-2/3 px-2 py-1.5 text-xs border border-stone-300 rounded focus:border-red-500 outline-none">
                         </div>
-                        <button onclick="submitGrade(${sub.id}, '${sub.user_id}', ${sub.profiles.total_marks}, ${sub.profiles.streak})" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 rounded transition shadow-sm">గ్రేడ్ సబ్మిట్ చేయి ✓</button>
+                        <button onclick="submitGrade(${sub.id}, '${sub.user_id}', ${sub.profiles.total_marks}, ${sub.profiles.streak})" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 rounded transition shadow-sm cursor-pointer">గ్రేడ్ సబ్మిట్ చేయి ✓</button>
                     </div>
                 `;
                 queueContainer.appendChild(card);
@@ -518,20 +567,34 @@
             const remarks = document.getElementById(`remarks_${submissionId}`).value || "బాగా రాశారు!";
 
             if(isNaN(marksGiven) || marksGiven < 0 || marksGiven > 10) {
-                alert("దయచేసి 0 నుండి 10 మధ్య సరైన మార్కులు వేయండి."); return;
+                alert("దయచేసి 0 నుండి 5 మధ్య సరైన మార్కులు వేయండి."); return;
             }
 
-            // 1. Update Submissions table
             await supabaseClient.from('submissions').update({ marks: marksGiven, remarks: remarks }).eq('id', submissionId);
 
-            // 2. Update Profiles table (Add to total marks & increase streak)
             await supabaseClient.from('profiles').update({ 
                 total_marks: currentTotalMarks + marksGiven,
                 streak: currentStreak + 1
             }).eq('id', userId);
 
+            // మార్కులు పడిన నిర్దిష్ట యూజర్‌కి మాత్రమే నోటిఫికేషన్ పంపడం
+            fetch("https://onesignal.com/api/v1/notifications", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Basic ${a7720d9c-21be-410f-b72e-d14ab1454ad7}`
+                },
+                body: JSON.stringify({
+                    app_id: "a7720d9c-21be-410f-b72e-d14ab1454ad7",
+                    include_aliases: { "external_id": [userId] },
+                    target_channel: "push",
+                    headings: { "en": "మీ మార్కులు వచ్చేశాయి! 🏆" },
+                    contents: { "en": `మీకు ${marksGiven}/10 మార్కులు వచ్చాయి. అడ్మిన్ రిమార్క్స్ చూడటానికి యాప్ ఓపెన్ చేయండి.` }
+                })
+            }).catch(e => console.log("Push error:", e));
+
             alert("మార్కులు సక్సెస్ ఫుల్ గా సబ్మిట్ అయ్యాయి!");
-            fetchAdminGradingQueue(); // Refresh Queue
+            fetchAdminGradingQueue();
         }
 
         async function fetchUserFeedback() {
@@ -560,7 +623,6 @@
             }
         }
 
-        // ================= NEW: DUAL LEADERBOARD LOGIC =================
         function switchLeaderboardTab(metric) {
             currentLeaderboardMetric = metric;
             document.getElementById('tabStreak').classList.remove('active-tab', 'bg-red-50');
