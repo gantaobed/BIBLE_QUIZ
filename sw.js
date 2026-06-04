@@ -1,11 +1,10 @@
-const CACHE_NAME = 'bible-quiz-v1';
+const CACHE_NAME = 'bible-quiz-v2';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './manifest.json'
 ];
 
-// 1. Install Event (కొత్త ఫైల్స్ క్యాష్ లో సేవ్ చేయడం)
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
@@ -15,7 +14,6 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// 2. Fetch Event (నెట్‌వర్క్ నుండి లేదా క్యాష్ నుండి ఫైల్స్ ఇవ్వడం)
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request).then((response) => {
@@ -24,7 +22,6 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-// 3. Activate Event (పాత క్యాష్ ని డిలీట్ చేసి కొత్తది ఉంచడం)
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
