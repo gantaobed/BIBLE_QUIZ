@@ -1,0 +1,21 @@
+{
+  "name": "Daily Bible Quiz",
+  "short_name": "Bible Quiz",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#fafafa",
+  "theme_color": "#b91c1c",
+  "description": "Daily Bible Quiz App for grading and leaderboards",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3073/3073428.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3073/3073428.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
