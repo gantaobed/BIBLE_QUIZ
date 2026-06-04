@@ -16,6 +16,7 @@
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
+    <!-- OneSignal Notifications -->
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
     <script>
       window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -27,13 +28,13 @@
     </script>
     
     <style>
-        body { font-family: 'Noto Sans Telugu', sans-serif; background-color: #fafafa; color: #1f2937; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Noto Sans Telugu', sans-serif; background-color: #fafafa; color: #1f2937; -webkit-tap-highlight-color: transparent; padding-bottom: 70px; }
         .eng-heading { font-family: 'Cinzel', serif; letter-spacing: 1px; }
         .red-card { background-color: #ffffff; border: 1px solid #fee2e2; border-radius: 16px; box-shadow: 0 4px 20px rgba(220, 38, 38, 0.05); transition: all 0.3s ease; }
         .dynamic-input { background-color: #f9fafb; border: 1px solid #e5e7eb; color: #111827; transition: all 0.2s; }
         .dynamic-input:focus { border-color: #dc2626; background-color: #ffffff; box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15); outline: none; }
         .red-btn { background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3); border: none; }
-        .active-tab { background-color: #dc2626; color: white; border-color: #b91c1c; }
+        .active-nav { color: #b91c1c; font-weight: bold; }
         .fade-in { animation: fadeInUp 0.4s forwards; }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         .hide-scroll::-webkit-scrollbar { height: 4px; }
@@ -42,7 +43,8 @@
 </head>
 <body class="min-h-screen antialiased selection:bg-red-500 selection:text-white">
 
-    <div id="authScreen" class="fixed inset-0 bg-red-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+    <!-- AUTHENTICATION SCREEN -->
+    <div id="authScreen" class="fixed inset-0 bg-red-950/90 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto hidden">
         <div class="bg-white p-6 sm:p-8 w-full max-w-md m-auto my-8 rounded-3xl shadow-2xl border border-red-100 fade-in">
             <div class="flex justify-end mb-2">
                 <button onclick="openAdminLoginModal()" class="text-[10px] bg-red-50 text-red-700 font-bold px-3 py-1.5 rounded-lg border border-red-200 cursor-pointer">🔒 అడ్మిన్ లాగిన్</button>
@@ -54,10 +56,9 @@
             </div>
             <form id="phoneCheckForm" onsubmit="checkMobileNumber(event)" class="space-y-5">
                 <div>
-                    <label class="block text-xs font-bold text-red-600 mb-2 uppercase tracking-wide">మొబైల్ నంబర్ *</label>
                     <input type="tel" id="loginPhone" required pattern="[0-9]{10}" placeholder="10 అంకెల నంబర్" class="w-full px-4 py-3.5 dynamic-input rounded-xl text-base tracking-widest font-bold text-center">
                 </div>
-                <button type="submit" class="w-full red-btn text-white font-bold py-3.5 px-4 rounded-xl cursor-pointer text-sm sm:text-base">ముందుకు సాగండి &rarr;</button>
+                <button type="submit" class="w-full red-btn text-white font-bold py-3.5 px-4 rounded-xl cursor-pointer text-sm">ముందుకు సాగండి &rarr;</button>
             </form>
 
             <form id="extendedSignupForm" onsubmit="handleDatabaseSignup(event)" class="space-y-4 hidden mt-6 pt-6 border-t border-red-100 fade-in">
@@ -73,12 +74,11 @@
         </div>
     </div>
 
+    <!-- ADMIN MODAL -->
     <div id="adminLoginModal" class="fixed inset-0 bg-stone-900/90 backdrop-blur-md z-[60] flex items-center justify-center p-4 hidden">
         <div class="bg-white p-8 w-full max-w-sm rounded-3xl shadow-2xl border border-red-200 fade-in relative">
             <button onclick="closeAdminLoginModal()" class="absolute top-4 right-4 text-stone-400 font-bold">&times;</button>
-            <div class="text-center mb-6">
-                <h2 class="text-xl font-bold text-red-800">Admin Portal</h2>
-            </div>
+            <div class="text-center mb-6"><h2 class="text-xl font-bold text-red-800">Admin Portal</h2></div>
             <form onsubmit="verifyAdminCredentials(event)" class="space-y-4">
                 <div><input type="text" id="adminIdInput" required placeholder="Admin ID" class="w-full px-4 py-3 dynamic-input rounded-xl text-sm text-center"></div>
                 <div><input type="password" id="adminPassInput" required placeholder="Password" class="w-full px-4 py-3 dynamic-input rounded-xl text-sm text-center"></div>
@@ -88,38 +88,32 @@
         </div>
     </div>
 
+    <!-- HEADER -->
     <header class="bg-gradient-to-r from-red-700 to-red-900 shadow-lg sticky top-0 z-40">
         <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center space-x-2 text-white">
-                <span class="text-xl">📖</span><h1 class="text-lg font-bold eng-heading">Daily Bible Quiz</h1>
+                <span class="text-xl">📖</span><h1 class="text-lg font-bold eng-heading">Bible Quiz</h1>
             </div>
             <div class="flex items-center space-x-3">
-                <span id="userNameHeader" class="text-xs bg-white text-red-700 px-3 py-1.5 rounded-full font-bold hidden">👤</span>
                 <span id="adminBadgeHeader" class="hidden text-[10px] font-black bg-stone-900 text-red-400 px-3 py-1.5 rounded-lg border border-red-900/50">ADMIN MODE</span>
-                <button onclick="logoutSession()" class="text-xs font-bold bg-white/20 text-white px-3 py-1.5 rounded-lg cursor-pointer">లాగౌట్</button>
             </div>
         </div>
     </header>
 
     <main class="max-w-6xl mx-auto px-3 py-6">
-        <div id="userContainer" class="space-y-5 fade-in hidden">
-            <div class="red-card p-5 flex flex-col sm:flex-row justify-between items-center gap-4 bg-white">
+        
+        <!-- ================= 1. HOME TAB (QUIZ) ================= -->
+        <section id="tabHome" class="space-y-5 fade-in hidden">
+            <div class="red-card p-5 flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div>
                     <span class="text-[10px] font-bold text-red-500 uppercase block mb-1">TODAY'S SCRIPTURE</span>
                     <h2 id="liveChapters" class="text-xl font-bold text-stone-800">లోడ్ అవుతోంది...</h2>
-                </div>
-                <div class="flex items-center space-x-3 bg-red-50 px-4 py-2.5 rounded-xl border border-red-100">
-                    <span class="text-2xl">🔥</span>
-                    <div>
-                        <p class="text-[10px] text-red-500 font-bold uppercase">లైవ్ స్ట్రీక్</p>
-                        <p id="liveStreak" class="text-lg font-black text-red-700 mt-0.5">0 రోజులు</p>
-                    </div>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
                 <div class="lg:col-span-2 red-card p-5">
-                    <h3 class="text-base font-bold text-red-700 mb-4 border-b border-red-100 pb-3">📝 నేటి 5 ప్రశ్నలు</h3>
+                    <h3 class="text-base font-bold text-red-700 mb-4 border-b border-red-100 pb-3">📝 నేటి 10 ప్రశ్నలు</h3>
                     <ol id="liveQuestionsList" class="space-y-3 list-decimal list-outside ml-4 text-stone-700 text-sm font-medium"></ol>
                 </div>
                 <div class="space-y-5">
@@ -140,9 +134,80 @@
                     </div>
                 </div>
             </div>
-        </div>
+            
+            <!-- HOME FOOTER -->
+            <div class="text-center mt-10 opacity-70">
+                <p class="text-xs text-stone-500 font-bold">&copy; 2026 Daily Bible Quiz App.</p>
+                <p class="text-[10px] text-stone-400 mt-1">All Rights Reserved. Maintained by <span class="text-red-700 font-bold">ZION PRAYER HOUSE POTHAVARAM</span></p>
+            </div>
+        </section>
 
-        <div id="adminContainer" class="space-y-5 hidden fade-in">
+        <!-- ================= 2. LEADERBOARD TAB ================= -->
+        <section id="tabLeaderboard" class="space-y-4 fade-in hidden">
+            <div class="text-center"><h2 class="text-xl font-bold text-red-800 eng-heading">Community Leaderboards</h2></div>
+            <div class="flex justify-center space-x-2 mb-4">
+                <button id="btnStreak" onclick="loadLeaderboardData('streak')" class="px-5 py-2.5 rounded-full text-xs font-bold border border-red-200 text-stone-600 bg-red-50 active-nav cursor-pointer">🔥 Streaks</button>
+                <button id="btnMarks" onclick="loadLeaderboardData('marks')" class="px-5 py-2.5 rounded-full text-xs font-bold border border-red-200 text-stone-600 cursor-pointer">🏆 Marks</button>
+            </div>
+            <div class="red-card overflow-hidden">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-red-50 border-b border-red-100 text-red-700 text-[10px] tracking-wider uppercase">
+                            <th class="px-4 py-4 w-16 text-center">Rank</th>
+                            <th class="px-4 py-4">Student & Church</th>
+                            <th id="lbMetricHeader" class="px-4 py-4 text-right w-28">Streak</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lbBody" class="divide-y divide-stone-100 text-stone-700 text-xs bg-white">
+                        <tr><td colspan="3" class="px-4 py-8 text-center text-stone-400">లోడ్ అవుతోంది...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ================= 3. PROFILE TAB ================= -->
+        <section id="tabProfile" class="space-y-5 fade-in hidden max-w-lg mx-auto">
+            <div class="red-card p-6 text-center bg-gradient-to-b from-red-50 to-white">
+                <div class="w-20 h-20 bg-red-100 text-red-600 text-4xl rounded-full flex items-center justify-center mx-auto mb-3 shadow-inner">👤</div>
+                <h2 id="profNameDisplay" class="text-xl font-bold text-stone-800">యూజర్ పేరు</h2>
+                <p id="profChurchDisplay" class="text-xs text-stone-500 font-bold uppercase tracking-wider mt-1">చర్చి పేరు</p>
+                
+                <div class="flex justify-center space-x-6 mt-6 pt-6 border-t border-red-100">
+                    <div><p class="text-2xl font-black text-red-700" id="profStreak">0</p><p class="text-[10px] text-stone-500 uppercase font-bold">Streak</p></div>
+                    <div><p class="text-2xl font-black text-red-700" id="profMarks">0</p><p class="text-[10px] text-stone-500 uppercase font-bold">Total Marks</p></div>
+                </div>
+            </div>
+
+            <!-- Profile Edit Form -->
+            <div class="red-card p-5">
+                <h3 class="text-sm font-bold text-red-700 mb-4 flex items-center">✏️ ప్రొఫైల్ మార్చుకోండి</h3>
+                <form onsubmit="updateUserProfile(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-[10px] font-bold text-stone-500 mb-1">పూర్తి పేరు</label>
+                        <input type="text" id="editName" class="w-full px-4 py-2.5 dynamic-input rounded-xl text-sm" required>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-stone-500 mb-1">చర్చి పేరు</label>
+                        <input type="text" id="editChurch" class="w-full px-4 py-2.5 dynamic-input rounded-xl text-sm" required>
+                    </div>
+                    <button type="submit" id="updateProfileBtn" class="w-full bg-stone-800 text-white font-bold py-3 px-4 rounded-xl text-sm shadow-md">సేవ్ చేయండి</button>
+                </form>
+            </div>
+
+            <!-- Church & YouTube Info -->
+            <div class="red-card p-5 bg-stone-50 text-center">
+                <h3 class="text-sm font-bold text-stone-800 mb-2">⛪ ZION PRAYER HOUSE POTHAVARAM</h3>
+                <p class="text-xs text-stone-500 mb-4">మరిన్ని ఆధ్యాత్మిక వీడియోలు మరియు వాక్య సందేశాల కోసం మా యూట్యూబ్ ఛానెల్‌ని సబ్‌స్క్రైబ్ చేసుకోండి.</p>
+                <a href="https://www.youtube.com/@zionprayerhousepothavaram8240" target="_blank" class="inline-block bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-full text-xs shadow-lg transition transform hover:scale-105">
+                    ▶️ YouTube Channel
+                </a>
+            </div>
+
+            <button onclick="logoutSession()" class="w-full bg-red-100 text-red-700 font-bold py-3 px-4 rounded-xl text-sm border border-red-200">లాగౌట్ అవ్వండి</button>
+        </section>
+
+        <!-- ================= 4. ADMIN TAB ================= -->
+        <section id="tabAdmin" class="space-y-5 fade-in hidden">
             <div class="red-card p-5 bg-stone-50">
                 <h3 class="text-sm font-bold text-red-700 mb-4">📢 కొత్త లేఖన భాగాలు పోస్ట్ చేయండి</h3>
                 <div class="space-y-4 max-w-2xl">
@@ -156,74 +221,84 @@
                     <h3 class="text-sm font-bold text-red-700">📥 జవాబు పత్రాల క్యూ</h3>
                     <button onclick="fetchAdminGradingQueue()" class="text-xs bg-stone-200 px-3 py-1.5 rounded-lg font-bold cursor-pointer">రీఫ్రెష్ 🔄</button>
                 </div>
-                <div id="adminGradingQueue" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div id="adminGradingQueue" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="col-span-full text-center text-stone-400 py-8 text-sm">లోడ్ అవుతోంది...</div>
                 </div>
             </div>
-        </div>
-
-        <hr class="border-red-200 my-8">
-        <section class="max-w-3xl mx-auto space-y-4 fade-in">
-            <div class="text-center"><h2 class="text-xl font-bold text-red-800 eng-heading">Community Leaderboards</h2></div>
-            <div class="flex justify-center space-x-2 mb-4">
-                <button id="tabStreak" onclick="switchLeaderboardTab('streak')" class="px-5 py-2.5 rounded-full text-xs font-bold border border-red-200 text-stone-600 active-tab cursor-pointer">🔥 Daily Streaks</button>
-                <button id="tabMarks" onclick="switchLeaderboardTab('marks')" class="px-5 py-2.5 rounded-full text-xs font-bold border border-red-200 text-stone-600 cursor-pointer">🏆 Highest Marks</button>
-            </div>
-            <div class="red-card overflow-hidden">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-red-50 border-b border-red-100 text-red-700 text-[10px] tracking-wider uppercase">
-                            <th class="px-4 py-4 w-16 text-center">Rank</th>
-                            <th class="px-4 py-4">Student & Church</th>
-                            <th id="leaderboardMetricHeader" class="px-4 py-4 text-right w-28">Streak</th>
-                        </tr>
-                    </thead>
-                    <tbody id="cloudLeaderboardBody" class="divide-y divide-stone-100 text-stone-700 text-xs bg-white">
-                        <tr><td colspan="3" class="px-4 py-8 text-center text-stone-400">లోడ్ అవుతోంది...</td></tr>
-                    </tbody>
-                </table>
-            </div>
+            <button onclick="logoutSession()" class="w-full bg-red-100 text-red-700 font-bold py-3 px-4 rounded-xl text-sm border border-red-200">లాగౌట్ (Admin)</button>
         </section>
+
     </main>
 
+    <!-- BOTTOM APP NAVIGATION BAR -->
+    <nav id="bottomNav" class="fixed bottom-0 w-full bg-white border-t border-stone-200 flex justify-around items-center py-2 z-50 pb-safe hidden">
+        <button onclick="switchAppTab('tabHome')" class="nav-btn flex flex-col items-center p-2 text-stone-400 hover:text-red-700 active-nav transition" id="nav-tabHome">
+            <span class="text-xl mb-1">🏠</span><span class="text-[10px] font-bold">Home</span>
+        </button>
+        <button onclick="switchAppTab('tabLeaderboard')" class="nav-btn flex flex-col items-center p-2 text-stone-400 hover:text-red-700 transition" id="nav-tabLeaderboard">
+            <span class="text-xl mb-1">🏆</span><span class="text-[10px] font-bold">Ranks</span>
+        </button>
+        <button onclick="switchAppTab('tabProfile')" class="nav-btn flex flex-col items-center p-2 text-stone-400 hover:text-red-700 transition" id="nav-tabProfile">
+            <span class="text-xl mb-1">👤</span><span class="text-[10px] font-bold">Profile</span>
+        </button>
+    </nav>
+
+    <!-- JS ENGINE -->
     <script>
         if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); }); }
 
         const SUPABASE_URL = "https://umizvkrztgsdfujubpub.supabase.co"; 
         const SUPABASE_ANON_KEY = "sb_publishable_yfoIeLljseU3TuaL62cYkg_mbIQxcU2"; 
-        const ONESIGNAL_REST_API_KEY = "oebgvw2abeem4oxp4dyageali"; 
+        const ONESIGNAL_REST_API_KEY = "oebgvw2abeem4oxp4dyageali";
         
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        let currentUserSession = null; let temporaryCheckedPhone = ""; let currentLeaderboardMetric = 'streak'; 
+        let currentUserSession = null; let temporaryCheckedPhone = ""; let lbMetric = 'streak'; 
         const VALID_ADMINS = [{ id: "obed", pass: "obed123" }, { id: "jayaraju", pass: "jayaraju123" }, { id: "daniel", pass: "daniel123" }];
 
-        window.onload = () => { checkUserSession(); fetchLiveQuiz(); fetchCloudLeaderboard(); listenToRealtimeUpdates(); };
+        window.onload = () => { checkUserSession(); fetchLiveQuiz(); };
 
         function checkUserSession() {
             const savedUser = localStorage.getItem('quiz_user_session');
             if (savedUser) {
                 currentUserSession = JSON.parse(savedUser);
-                document.getElementById('authScreen').classList.add('hidden');
                 
                 if(currentUserSession.role === 'admin') {
-                    document.getElementById('adminContainer').classList.remove('hidden');
-                    document.getElementById('userContainer').classList.add('hidden');
                     document.getElementById('adminBadgeHeader').classList.remove('hidden');
-                    document.getElementById('userNameHeader').classList.add('hidden');
+                    switchAppTab('tabAdmin');
                     fetchAdminGradingQueue();
                 } else {
-                    document.getElementById('userContainer').classList.remove('hidden');
-                    document.getElementById('adminContainer').classList.add('hidden');
-                    document.getElementById('liveStreak').innerText = `${currentUserSession.streak} రోజులు`;
-                    document.getElementById('userNameHeader').innerText = `👤 ${currentUserSession.name.split(' ')[0]}`;
-                    document.getElementById('userNameHeader').classList.remove('hidden');
+                    document.getElementById('bottomNav').classList.remove('hidden');
+                    switchAppTab('tabHome');
                     
                     if(typeof OneSignalDeferred !== 'undefined') {
-                        OneSignalDeferred.push(function(OneSignal) { OneSignal.login(currentUserSession.id); });
+                        OneSignalDeferred.push(function(OneSignal) { 
+                            OneSignal.login(currentUserSession.id);
+                            OneSignal.Slidedown.promptPush(); 
+                        });
                     }
+                    
                     fetchUserFeedback();
+                    fetchUserProfileDetails();
                 }
+            } else {
+                document.getElementById('authScreen').classList.remove('hidden');
             }
+        }
+
+        function switchAppTab(tabId) {
+            ['tabHome', 'tabLeaderboard', 'tabProfile', 'tabAdmin'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.classList.add('hidden');
+            });
+            document.getElementById(tabId).classList.remove('hidden');
+
+            if(tabId !== 'tabAdmin') {
+                document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active-nav', 'text-red-700'));
+                document.getElementById('nav-' + tabId).classList.add('active-nav', 'text-red-700');
+            }
+
+            if(tabId === 'tabLeaderboard') loadLeaderboardData(lbMetric);
+            if(tabId === 'tabProfile') fetchUserProfileDetails();
         }
 
         function openAdminLoginModal() { document.getElementById('adminLoginModal').classList.remove('hidden'); document.getElementById('adminLoginError').classList.add('hidden'); }
@@ -239,9 +314,7 @@
                 currentUserSession = { id: matchedAdmin.id, name: "Admin", role: 'admin', streak: 0 };
                 localStorage.setItem('quiz_user_session', JSON.stringify(currentUserSession));
                 location.reload();
-            } else {
-                document.getElementById('adminLoginError').classList.remove('hidden');
-            }
+            } else { document.getElementById('adminLoginError').classList.remove('hidden'); }
         }
 
         async function checkMobileNumber(e) {
@@ -256,7 +329,7 @@
                 if (error) throw error;
                 if (data && data.length > 0) {
                     const u = data[0];
-                    currentUserSession = { id: u.id, name: u.full_name, church: u.church_name, streak: u.streak, role: 'user' };
+                    currentUserSession = { id: u.id, name: u.full_name, church: u.church_name, role: 'user' };
                     localStorage.setItem('quiz_user_session', JSON.stringify(currentUserSession));
                     location.reload(); 
                 } else {
@@ -264,9 +337,7 @@
                     document.getElementById('loginPhone').disabled = true; 
                     btn.innerHTML = "కొత్త ఖాతా";
                 }
-            } catch (err) {
-                alert("నెట్‌వర్క్ లోపం. దయచేసి మళ్ళీ ప్రయత్నించండి."); btn.innerHTML = "ముందుకు సాగండి &rarr;"; btn.disabled = false;
-            }
+            } catch (err) { alert("లోపం. మళ్ళీ ప్రయత్నించండి."); btn.innerHTML = "ముందుకు సాగండి &rarr;"; btn.disabled = false; }
         }
 
         async function handleDatabaseSignup(e) {
@@ -278,9 +349,9 @@
             btn.innerHTML = "సృష్టించబడుతోంది..."; btn.disabled = true;
 
             const { data, error } = await supabaseClient.from('profiles').insert([{ full_name: name, phone_number: temporaryCheckedPhone, age: age, church_name: church }]).select();
-
             if (error) { alert("లోపం: " + error.message); btn.disabled = false; return; }
-            currentUserSession = { id: data[0].id, name: name, church: church, streak: 1, role: 'user' };
+            
+            currentUserSession = { id: data[0].id, name: name, church: church, role: 'user' };
             localStorage.setItem('quiz_user_session', JSON.stringify(currentUserSession)); location.reload();
         }
 
@@ -310,7 +381,6 @@
 
             await supabaseClient.from('daily_quiz').insert([{ chapters: chapters, questions: questionsArray }]);
             
-            // నోటిఫికేషన్ సెండ్ చేయడం
             fetch("https://onesignal.com/api/v1/notifications", {
                 method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Basic ${ONESIGNAL_REST_API_KEY}` },
                 body: JSON.stringify({ app_id: "a7720d9c-21be-410f-b72e-d14ab1454ad7", included_segments: ["Total Subscriptions"], headings: { "en": "కొత్త ప్రశ్నలు వచ్చాయి! 📖" }, contents: { "en": "ఈరోజు క్విజ్ అప్‌డేట్ అయ్యాయి. యాప్ ఓపెన్ చేయండి!" } })
@@ -345,7 +415,7 @@
             data.forEach(sub => {
                 const imageUrl = supabaseClient.storage.from('answer-sheets').getPublicUrl(sub.image_url).data.publicUrl;
                 queueContainer.innerHTML += `
-                    <div class="bg-white border border-stone-200 rounded-xl p-4">
+                    <div class="bg-white border border-stone-200 rounded-xl p-4 shadow-sm">
                         <div class="mb-3"><div class="font-bold text-sm truncate">${sub.profiles.full_name}</div></div>
                         <div class="w-full h-32 bg-stone-100 rounded-lg mb-3 overflow-hidden flex items-center justify-center">
                             <a href="${imageUrl}" target="_blank"><img src="${imageUrl}" class="w-full h-full object-cover"></a>
@@ -369,7 +439,6 @@
             await supabaseClient.from('submissions').update({ marks: marksGiven, remarks: remarks }).eq('id', submissionId);
             await supabaseClient.from('profiles').update({ total_marks: currentTotalMarks + marksGiven, streak: currentStreak + 1 }).eq('id', userId);
 
-            // మార్కుల నోటిఫికేషన్ సెండ్ చేయడం
             fetch("https://onesignal.com/api/v1/notifications", {
                 method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Basic ${ONESIGNAL_REST_API_KEY}` },
                 body: JSON.stringify({ app_id: "a7720d9c-21be-410f-b72e-d14ab1454ad7", include_aliases: { "external_id": [userId] }, target_channel: "push", headings: { "en": "మార్కులు వచ్చేశాయి! 🏆" }, contents: { "en": `మీకు ${marksGiven}/10 వచ్చాయి.` } })
@@ -390,32 +459,60 @@
             }
         }
 
-        function switchLeaderboardTab(metric) {
-            currentLeaderboardMetric = metric;
-            document.getElementById('tabStreak').classList.remove('active-tab'); document.getElementById('tabMarks').classList.remove('active-tab');
-            if(metric === 'streak') { document.getElementById('tabStreak').classList.add('active-tab'); document.getElementById('leaderboardMetricHeader').innerText = "Streak"; } 
-            else { document.getElementById('tabMarks').classList.add('active-tab'); document.getElementById('leaderboardMetricHeader').innerText = "Total Marks"; }
-            fetchCloudLeaderboard();
+        function loadLeaderboardData(metric) {
+            lbMetric = metric;
+            document.getElementById('btnStreak').classList.remove('bg-red-50', 'active-nav'); document.getElementById('btnMarks').classList.remove('bg-red-50', 'active-nav');
+            
+            if(metric === 'streak') { document.getElementById('btnStreak').classList.add('bg-red-50', 'active-nav'); document.getElementById('lbMetricHeader').innerText = "Streak"; } 
+            else { document.getElementById('btnMarks').classList.add('bg-red-50', 'active-nav'); document.getElementById('lbMetricHeader').innerText = "Total Marks"; }
+            
+            fetchLB();
         }
 
-        async function fetchCloudLeaderboard() {
-            const orderByColumn = currentLeaderboardMetric === 'streak' ? 'streak' : 'total_marks';
+        async function fetchLB() {
+            const orderByColumn = lbMetric === 'streak' ? 'streak' : 'total_marks';
             const { data } = await supabaseClient.from('profiles').select('*').order(orderByColumn, { ascending: false }).limit(20);
-            const tbody = document.getElementById('cloudLeaderboardBody'); tbody.innerHTML = "";
+            const tbody = document.getElementById('lbBody'); tbody.innerHTML = "";
             if (data && data.length > 0) {
                 data.forEach((u, i) => {
                     let r = `<span class="text-stone-400 font-bold">#${i + 1}</span>`; if(i===0) r="🥇"; if(i===1) r="🥈"; if(i===2) r="🥉";
-                    const isMe = (currentUserSession && currentUserSession.id === u.id) ? "bg-red-50/50" : "";
-                    const m = currentLeaderboardMetric === 'streak' ? `🔥 ${u.streak}` : `⭐ ${u.total_marks}`;
+                    const isMe = (currentUserSession && currentUserSession.id === u.id) ? "bg-red-50" : "";
+                    const m = lbMetric === 'streak' ? `🔥 ${u.streak}` : `⭐ ${u.total_marks}`;
                     tbody.innerHTML += `<tr class="${isMe}"><td class="px-4 py-4 text-center">${r}</td><td class="px-4 py-4"><div class="font-bold text-sm">${u.full_name}</div><div class="text-[10px] text-stone-500 uppercase">${u.church_name}</div></td><td class="px-4 py-4 text-right font-bold text-red-600">${m}</td></tr>`;
                 });
             }
         }
 
-        function listenToRealtimeUpdates() {
-            supabaseClient.channel('public:profiles').on('postgres_changes', { event: '*', filter: 'table=eq.profiles' }, () => { fetchCloudLeaderboard(); }).subscribe();
-            supabaseClient.channel('public:submissions').on('postgres_changes', { event: '*', filter: 'table=eq.submissions' }, () => { fetchAdminGradingQueue(); fetchUserFeedback(); }).subscribe();
+        async function fetchUserProfileDetails() {
+            if(!currentUserSession || currentUserSession.role !== 'user') return;
+            const { data, error } = await supabaseClient.from('profiles').select('*').eq('id', currentUserSession.id).single();
+            if(data) {
+                document.getElementById('profNameDisplay').innerText = data.full_name;
+                document.getElementById('profChurchDisplay').innerText = data.church_name;
+                document.getElementById('profStreak').innerText = data.streak;
+                document.getElementById('profMarks').innerText = data.total_marks;
+                
+                document.getElementById('editName').value = data.full_name;
+                document.getElementById('editChurch').value = data.church_name;
+            }
         }
+
+        async function updateUserProfile(e) {
+            e.preventDefault();
+            const newName = document.getElementById('editName').value.trim();
+            const newChurch = document.getElementById('editChurch').value.trim();
+            const btn = document.getElementById('updateProfileBtn');
+            btn.innerText = "సేవ్ అవుతోంది..."; btn.disabled = true;
+
+            const { error } = await supabaseClient.from('profiles').update({ full_name: newName, church_name: newChurch }).eq('id', currentUserSession.id);
+            if(error) { alert("ప్రొఫైల్ అప్‌డేట్ అవ్వలేదు. మళ్ళీ ప్రయత్నించండి."); } 
+            else { 
+                alert("ప్రొఫైల్ సక్సెస్ ఫుల్ గా అప్‌డేట్ అయ్యింది! ✅"); 
+                fetchUserProfileDetails();
+            }
+            btn.innerText = "సేవ్ చేయండి"; btn.disabled = false;
+        }
+
     </script>
 </body>
 </html>
