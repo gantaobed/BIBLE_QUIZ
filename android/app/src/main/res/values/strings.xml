@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Daily Bible Quiz</string>
+    <string name="title_activity_main">Daily Bible Quiz</string>
+    <string name="package_name">com.zionprayerhouse.biblequiz</string>
+    <string name="custom_url_scheme">com.zionprayerhouse.biblequiz</string>
+</resources>
