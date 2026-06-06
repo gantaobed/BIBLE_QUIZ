@@ -11,8 +11,9 @@
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#b91c1c">
-    
     <link rel="apple-touch-icon" href="logo.png">
+    
+    <link rel="icon" href="logo.png" type="image/png">
 
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -250,7 +251,7 @@
     </nav>
 
     <script>
-        // NEW SERVICE WORKER REGISTRATION (Auto Update Fix)
+        // 2. NEW SERVICE WORKER REGISTRATION (Auto Update Fix)
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js').then(reg => {
@@ -258,9 +259,8 @@
                         const installingWorker = reg.installing;
                         installingWorker.onstatechange = () => {
                             if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                if (confirm("యాప్‌లో కొత్త అప్‌డేట్ వచ్చింది! దయచేసి 'OK' నొక్కి రిఫ్రెష్ చేయండి.")) {
-                                    window.location.reload();
-                                }
+                                // ఆటోమేటిక్ అప్‌డేట్ కోసం... ఇక్కడ మీరు కావాలంటే కన్ఫర్మ్ పాప్-అప్ తీసేయొచ్చు
+                                console.log("New content available, please refresh.");
                             }
                         };
                     };

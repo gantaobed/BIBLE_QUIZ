@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bible-quiz-cache-v3';
+const CACHE_NAME = 'bible-quiz-cache-v4';
 
 self.addEventListener('install', (event) => {
     self.skipWaiting(); 
@@ -19,7 +19,13 @@ self.addEventListener('activate', (event) => {
     self.clients.claim();
 });
 
+// Network First, fallback to cache
 self.addEventListener('fetch', (event) => {
+    // బ్రౌజర్ ఎక్స్‌టెన్షన్ ఎర్రర్ (chrome-extension://) రాకుండా కండిషన్
+    if (!event.request.url.startsWith('http')) {
+        return;
+    }
+
     event.respondWith(
         fetch(event.request)
             .then((networkResponse) => {
