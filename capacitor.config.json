@@ -1,6 +1,6 @@
 {
-  "appId": "com.yourname.biblequiz",
-  "appName": "Bible Quiz",
+  "appId": "com.zionprayerhouse.biblequiz",
+  "appName": "Daily Bible Quiz",
   "webDir": "www",
   "bundledWebRuntime": false
 }
