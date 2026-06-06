@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Daily Bible Quiz</title>
     
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#b91c1c">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3073/3073428.png">
@@ -16,7 +20,6 @@
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <!-- OneSignal Notifications -->
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
     <script>
       window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -43,7 +46,6 @@
 </head>
 <body class="min-h-screen antialiased selection:bg-red-500 selection:text-white">
 
-    <!-- AUTHENTICATION SCREEN -->
     <div id="authScreen" class="fixed inset-0 bg-red-950/90 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto hidden">
         <div class="bg-white p-6 sm:p-8 w-full max-w-md m-auto my-8 rounded-3xl shadow-2xl border border-red-100 fade-in">
             <div class="flex justify-end mb-2">
@@ -74,7 +76,6 @@
         </div>
     </div>
 
-    <!-- ADMIN MODAL -->
     <div id="adminLoginModal" class="fixed inset-0 bg-stone-900/90 backdrop-blur-md z-[60] flex items-center justify-center p-4 hidden">
         <div class="bg-white p-8 w-full max-w-sm rounded-3xl shadow-2xl border border-red-200 fade-in relative">
             <button onclick="closeAdminLoginModal()" class="absolute top-4 right-4 text-stone-400 font-bold">&times;</button>
@@ -88,7 +89,6 @@
         </div>
     </div>
 
-    <!-- HEADER -->
     <header class="bg-gradient-to-r from-red-700 to-red-900 shadow-lg sticky top-0 z-40">
         <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center space-x-2 text-white">
@@ -102,7 +102,6 @@
 
     <main class="max-w-6xl mx-auto px-3 py-6">
         
-        <!-- ================= 1. HOME TAB (QUIZ) ================= -->
         <section id="tabHome" class="space-y-5 fade-in hidden">
             <div class="red-card p-5 flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div>
@@ -135,14 +134,12 @@
                 </div>
             </div>
             
-            <!-- HOME FOOTER -->
             <div class="text-center mt-10 opacity-70">
                 <p class="text-xs text-stone-500 font-bold">&copy; 2026 Daily Bible Quiz App.</p>
                 <p class="text-[10px] text-stone-400 mt-1">All Rights Reserved. Maintained by <span class="text-red-700 font-bold">ZION PRAYER HOUSE POTHAVARAM</span></p>
             </div>
         </section>
 
-        <!-- ================= 2. LEADERBOARD TAB ================= -->
         <section id="tabLeaderboard" class="space-y-4 fade-in hidden">
             <div class="text-center"><h2 class="text-xl font-bold text-red-800 eng-heading">Community Leaderboards</h2></div>
             <div class="flex justify-center space-x-2 mb-4">
@@ -165,11 +162,9 @@
             </div>
         </section>
 
-        <!-- ================= 3. PROFILE TAB ================= -->
         <section id="tabProfile" class="space-y-5 fade-in hidden max-w-lg mx-auto">
             <div class="red-card p-6 text-center bg-gradient-to-b from-red-50 to-white">
                 
-                <!-- Profile Picture Section -->
                 <div class="relative w-24 h-24 mx-auto mb-2">
                     <input type="file" id="profilePicUpload" class="hidden" accept="image/*" onchange="uploadProfilePic(this)">
                     <label for="profilePicUpload" class="cursor-pointer block w-full h-full rounded-full border-4 border-white shadow-md overflow-hidden relative group bg-red-50">
@@ -191,7 +186,6 @@
                 </div>
             </div>
 
-            <!-- Profile Edit Form -->
             <div class="red-card p-5">
                 <h3 class="text-sm font-bold text-red-700 mb-4 flex items-center">✏️ ప్రొఫైల్ మార్చుకోండి</h3>
                 <form onsubmit="updateUserProfile(event)" class="space-y-4">
@@ -207,7 +201,6 @@
                 </form>
             </div>
 
-            <!-- Church & YouTube Info -->
             <div class="red-card p-5 bg-stone-50 text-center">
                 <h3 class="text-sm font-bold text-stone-800 mb-2">⛪ ZION PRAYER HOUSE POTHAVARAM</h3>
                 <p class="text-xs text-stone-500 mb-4">మరిన్ని ఆధ్యాత్మిక వీడియోలు మరియు వాక్య సందేశాల కోసం మా యూట్యూబ్ ఛానెల్‌ని సబ్‌స్క్రైబ్ చేసుకోండి.</p>
@@ -219,7 +212,6 @@
             <button onclick="logoutSession()" class="w-full bg-red-100 text-red-700 font-bold py-3 px-4 rounded-xl text-sm border border-red-200">లాగౌట్ అవ్వండి</button>
         </section>
 
-        <!-- ================= 4. ADMIN TAB ================= -->
         <section id="tabAdmin" class="space-y-5 fade-in hidden">
             <div class="red-card p-5 bg-stone-50">
                 <h3 class="text-sm font-bold text-red-700 mb-4">📢 కొత్త లేఖన భాగాలు పోస్ట్ చేయండి</h3>
@@ -243,7 +235,6 @@
 
     </main>
 
-    <!-- BOTTOM APP NAVIGATION BAR -->
     <nav id="bottomNav" class="fixed bottom-0 w-full bg-white border-t border-stone-200 flex justify-around items-center py-2 z-50 pb-safe hidden">
         <button onclick="switchAppTab('tabHome')" class="nav-btn flex flex-col items-center p-2 text-stone-400 hover:text-red-700 active-nav transition" id="nav-tabHome">
             <span class="text-xl mb-1">🏠</span><span class="text-[10px] font-bold">Home</span>
@@ -256,9 +247,31 @@
         </button>
     </nav>
 
-    <!-- JS ENGINE -->
     <script>
-        if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); }); }
+        // NEW SERVICE WORKER REGISTRATION (Auto Update Fix)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').then(reg => {
+                    reg.onupdatefound = () => {
+                        const installingWorker = reg.installing;
+                        installingWorker.onstatechange = () => {
+                            if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                if (confirm("యాప్‌లో కొత్త అప్‌డేట్ వచ్చింది! దయచేసి 'OK' నొక్కి రిఫ్రెష్ చేయండి.")) {
+                                    window.location.reload();
+                                }
+                            }
+                        };
+                    };
+                }).catch(err => console.log('Service Worker registration failed: ', err));
+            });
+            
+            let refreshing;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (refreshing) return;
+                window.location.reload();
+                refreshing = true;
+            });
+        }
 
         const SUPABASE_URL = "https://umizvkrztgsdfujubpub.supabase.co"; 
         const SUPABASE_ANON_KEY = "sb_publishable_yfoIeLljseU3TuaL62cYkg_mbIQxcU2"; 
@@ -268,7 +281,6 @@
         let currentUserSession = null; let temporaryCheckedPhone = ""; let lbMetric = 'streak'; 
         const VALID_ADMINS = [{ id: "obed", pass: "obed123" }, { id: "jayaraju", pass: "jayaraju123" }, { id: "daniel", pass: "daniel123" }];
         
-        // Default avatar image
         const DEFAULT_AVATAR = "https://cdn-icons-png.flaticon.com/512/3177/3177440.png";
 
         window.onload = () => { checkUserSession(); fetchLiveQuiz(); };
@@ -421,7 +433,6 @@
             }
         }
 
-        // --- NEW: UPLOAD PROFILE PIC ---
         async function uploadProfilePic(input) {
             if(!currentUserSession || currentUserSession.role !== 'user') return;
             if(input.files && input.files[0]) {
@@ -432,7 +443,6 @@
                 
                 const fileName = `avatar_${currentUserSession.id}_${Date.now()}.${file.name.split('.').pop()}`;
 
-                // Upload to 'avatars' storage bucket
                 const { error: storageError } = await supabaseClient.storage.from('avatars').upload(fileName, file);
                 
                 if(storageError) { 
@@ -441,7 +451,6 @@
                     return; 
                 }
 
-                // Update 'avatar_url' column in profiles table
                 const { error: updateError } = await supabaseClient.from('profiles').update({ avatar_url: fileName }).eq('id', currentUserSession.id);
                 
                 if(updateError) {
@@ -525,7 +534,6 @@
 
         async function fetchLB() {
             const orderByColumn = lbMetric === 'streak' ? 'streak' : 'total_marks';
-            // Added avatar_url to the select query
             const { data } = await supabaseClient.from('profiles').select('id, full_name, church_name, streak, total_marks, avatar_url').order(orderByColumn, { ascending: false }).limit(20);
             const tbody = document.getElementById('lbBody'); tbody.innerHTML = "";
             if (data && data.length > 0) {
@@ -534,7 +542,6 @@
                     const isMe = (currentUserSession && currentUserSession.id === u.id) ? "bg-red-50" : "";
                     const m = lbMetric === 'streak' ? `🔥 ${u.streak}` : `⭐ ${u.total_marks}`;
                     
-                    // Assign avatar or default image
                     const avatarImg = u.avatar_url 
                         ? supabaseClient.storage.from('avatars').getPublicUrl(u.avatar_url).data.publicUrl 
                         : DEFAULT_AVATAR;
@@ -569,7 +576,6 @@
                 document.getElementById('editName').value = data.full_name;
                 document.getElementById('editChurch').value = data.church_name;
 
-                // Set profile picture if exists
                 if(data.avatar_url) {
                     const avatarUrl = supabaseClient.storage.from('avatars').getPublicUrl(data.avatar_url).data.publicUrl;
                     document.getElementById('profImageDisplay').src = avatarUrl;
