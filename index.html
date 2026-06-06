@@ -119,11 +119,11 @@
                 <div class="space-y-5">
                     <div class="red-card p-5">
                         <h3 class="text-sm font-bold text-red-700 mb-3">📸 ఫోటో అప్‌లోడ్</h3>
-                        <div class="border-2 border-dashed border-red-300 rounded-xl p-5 text-center bg-red-50/50 cursor-pointer">
+                        <div class="border-2 border-dashed border-red-300 rounded-xl p-5 text-center bg-red-50/50 cursor-pointer hover:bg-red-50 transition">
                             <input type="file" id="dbImageUpload" class="hidden" accept="image/*" onchange="uploadAnswerSheetToCloud(this)">
                             <label for="dbImageUpload" class="cursor-pointer block" id="uploadLabel">
                                 <span class="text-3xl block mb-2">📤</span>
-                                <span class="text-sm font-bold text-stone-600 block">ఫోటో ఎంచుకోండి</span>
+                                <span class="text-sm font-bold text-stone-600 block">జవాబు ఫోటో ఎంచుకోండి</span>
                             </label>
                         </div>
                         <div id="cloudUploadSuccess" class="hidden mt-3 text-center p-2.5 bg-emerald-50 text-emerald-700 rounded-lg text-xs font-bold">✓ చిత్రం అప్‌లోడ్ అయింది!</div>
@@ -153,9 +153,9 @@
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-red-50 border-b border-red-100 text-red-700 text-[10px] tracking-wider uppercase">
-                            <th class="px-4 py-4 w-16 text-center">Rank</th>
+                            <th class="px-4 py-4 w-12 text-center">Rank</th>
                             <th class="px-4 py-4">Student & Church</th>
-                            <th id="lbMetricHeader" class="px-4 py-4 text-right w-28">Streak</th>
+                            <th id="lbMetricHeader" class="px-4 py-4 text-right w-24">Streak</th>
                         </tr>
                     </thead>
                     <tbody id="lbBody" class="divide-y divide-stone-100 text-stone-700 text-xs bg-white">
@@ -168,7 +168,20 @@
         <!-- ================= 3. PROFILE TAB ================= -->
         <section id="tabProfile" class="space-y-5 fade-in hidden max-w-lg mx-auto">
             <div class="red-card p-6 text-center bg-gradient-to-b from-red-50 to-white">
-                <div class="w-20 h-20 bg-red-100 text-red-600 text-4xl rounded-full flex items-center justify-center mx-auto mb-3 shadow-inner">👤</div>
+                
+                <!-- Profile Picture Section -->
+                <div class="relative w-24 h-24 mx-auto mb-2">
+                    <input type="file" id="profilePicUpload" class="hidden" accept="image/*" onchange="uploadProfilePic(this)">
+                    <label for="profilePicUpload" class="cursor-pointer block w-full h-full rounded-full border-4 border-white shadow-md overflow-hidden relative group bg-red-50">
+                        <img id="profImageDisplay" src="https://cdn-icons-png.flaticon.com/512/3177/3177440.png" alt="Profile" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <span class="text-white text-xs font-bold">మార్చు</span>
+                        </div>
+                    </label>
+                    <span class="absolute bottom-0 right-0 bg-red-600 text-white p-1.5 rounded-full border-2 border-white text-xs shadow-sm cursor-pointer" onclick="document.getElementById('profilePicUpload').click()">📷</span>
+                </div>
+                <div id="profUploadStatus" class="text-[10px] font-bold text-stone-500 mb-3 h-4"></div>
+
                 <h2 id="profNameDisplay" class="text-xl font-bold text-stone-800">యూజర్ పేరు</h2>
                 <p id="profChurchDisplay" class="text-xs text-stone-500 font-bold uppercase tracking-wider mt-1">చర్చి పేరు</p>
                 
@@ -254,6 +267,9 @@
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         let currentUserSession = null; let temporaryCheckedPhone = ""; let lbMetric = 'streak'; 
         const VALID_ADMINS = [{ id: "obed", pass: "obed123" }, { id: "jayaraju", pass: "jayaraju123" }, { id: "daniel", pass: "daniel123" }];
+        
+        // Default avatar image
+        const DEFAULT_AVATAR = "https://cdn-icons-png.flaticon.com/512/3177/3177440.png";
 
         window.onload = () => { checkUserSession(); fetchLiveQuiz(); };
 
@@ -397,11 +413,49 @@
                 const fileName = `${currentUserSession.id}_${Date.now()}.${file.name.split('.').pop()}`;
 
                 const { error: storageError } = await supabaseClient.storage.from('answer-sheets').upload(fileName, file);
-                if(storageError) { alert("ఫెయిల్ అయింది."); label.innerHTML = `<span class="text-3xl block mb-2">📤</span><span class="text-sm font-bold text-stone-600 block">ఫోటో ఎంచుకోండి</span>`; return; }
+                if(storageError) { alert("ఫెయిల్ అయింది."); label.innerHTML = `<span class="text-3xl block mb-2">📤</span><span class="text-sm font-bold text-stone-600 block">జవాబు ఫోటో ఎంచుకోండి</span>`; return; }
 
                 await supabaseClient.from('submissions').insert([{ user_id: currentUserSession.id, image_url: fileName }]);
                 document.getElementById('cloudUploadSuccess').classList.remove('hidden');
                 label.innerHTML = `<span class="text-3xl block mb-2 text-emerald-600">✅</span><span class="text-sm font-bold text-stone-600 block">సక్సెస్!</span>`;
+            }
+        }
+
+        // --- NEW: UPLOAD PROFILE PIC ---
+        async function uploadProfilePic(input) {
+            if(!currentUserSession || currentUserSession.role !== 'user') return;
+            if(input.files && input.files[0]) {
+                const file = input.files[0];
+                const statusText = document.getElementById('profUploadStatus');
+                statusText.innerText = "అప్‌లోడ్ అవుతోంది...";
+                statusText.className = "text-[10px] font-bold text-amber-500 mb-3 h-4";
+                
+                const fileName = `avatar_${currentUserSession.id}_${Date.now()}.${file.name.split('.').pop()}`;
+
+                // Upload to 'avatars' storage bucket
+                const { error: storageError } = await supabaseClient.storage.from('avatars').upload(fileName, file);
+                
+                if(storageError) { 
+                    statusText.innerText = "ఫెయిల్ అయింది. మళ్ళీ ప్రయత్నించండి."; 
+                    statusText.className = "text-[10px] font-bold text-red-500 mb-3 h-4";
+                    return; 
+                }
+
+                // Update 'avatar_url' column in profiles table
+                const { error: updateError } = await supabaseClient.from('profiles').update({ avatar_url: fileName }).eq('id', currentUserSession.id);
+                
+                if(updateError) {
+                    statusText.innerText = "ప్రొఫైల్ అప్‌డేట్ ఫెయిల్ అయింది.";
+                    statusText.className = "text-[10px] font-bold text-red-500 mb-3 h-4";
+                    return;
+                }
+
+                const publicUrl = supabaseClient.storage.from('avatars').getPublicUrl(fileName).data.publicUrl;
+                document.getElementById('profImageDisplay').src = publicUrl;
+                
+                statusText.innerText = "✓ అప్‌లోడ్ సక్సెస్!";
+                statusText.className = "text-[10px] font-bold text-emerald-500 mb-3 h-4";
+                setTimeout(() => { statusText.innerText = ""; }, 3000);
             }
         }
 
@@ -422,7 +476,7 @@
                         </div>
                         <div class="space-y-2">
                             <div class="flex space-x-2">
-                                <input type="number" id="marks_${sub.id}" placeholder="0-10" class="w-1/3 px-2 py-1.5 text-sm border rounded text-center font-bold">
+                                <input type="number" id="marks_${sub.id}" placeholder="0-5" class="w-1/3 px-2 py-1.5 text-sm border rounded text-center font-bold">
                                 <input type="text" id="remarks_${sub.id}" placeholder="Remarks" class="w-2/3 px-2 py-1.5 text-xs border rounded">
                             </div>
                             <button onclick="submitGrade(${sub.id}, '${sub.user_id}', ${sub.profiles.total_marks}, ${sub.profiles.streak})" class="w-full bg-emerald-600 text-white text-xs font-bold py-2 rounded cursor-pointer">సబ్మిట్ చేయి ✓</button>
@@ -434,14 +488,14 @@
         async function submitGrade(submissionId, userId, currentTotalMarks, currentStreak) {
             const marksGiven = parseInt(document.getElementById(`marks_${submissionId}`).value);
             const remarks = document.getElementById(`remarks_${submissionId}`).value || "బాగా రాశారు!";
-            if(isNaN(marksGiven) || marksGiven < 0 || marksGiven > 10) { alert("సరైన మార్కులు వేయండి."); return; }
+            if(isNaN(marksGiven) || marksGiven < 0 || marksGiven > 5) { alert("సరైన మార్కులు వేయండి."); return; }
 
             await supabaseClient.from('submissions').update({ marks: marksGiven, remarks: remarks }).eq('id', submissionId);
             await supabaseClient.from('profiles').update({ total_marks: currentTotalMarks + marksGiven, streak: currentStreak + 1 }).eq('id', userId);
 
             fetch("https://onesignal.com/api/v1/notifications", {
                 method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Basic ${ONESIGNAL_REST_API_KEY}` },
-                body: JSON.stringify({ app_id: "a7720d9c-21be-410f-b72e-d14ab1454ad7", include_aliases: { "external_id": [userId] }, target_channel: "push", headings: { "en": "మార్కులు వచ్చేశాయి! 🏆" }, contents: { "en": `మీకు ${marksGiven}/10 వచ్చాయి.` } })
+                body: JSON.stringify({ app_id: "a7720d9c-21be-410f-b72e-d14ab1454ad7", include_aliases: { "external_id": [userId] }, target_channel: "push", headings: { "en": "మార్కులు వచ్చేశాయి! 🏆" }, contents: { "en": `మీకు ${marksGiven}/5 వచ్చాయి.` } })
             }).catch(e => console.log(e));
 
             alert("సబ్మిట్ అయ్యాయి!"); fetchAdminGradingQueue();
@@ -453,7 +507,7 @@
                 const block = document.getElementById('liveFeedbackBlock');
                 if(data && data.length > 0) {
                     const latest = data[0];
-                    if(latest.marks !== null) block.innerHTML = `<div class="p-4 bg-emerald-50 text-emerald-700 font-bold">✅ స్కోర్: ${latest.marks} / 10 <br><span class="text-xs text-stone-700 font-medium">"${latest.remarks}"</span></div>`;
+                    if(latest.marks !== null) block.innerHTML = `<div class="p-4 bg-emerald-50 text-emerald-700 font-bold">✅ స్కోర్: ${latest.marks} / 5 <br><span class="text-xs text-stone-700 font-medium">"${latest.remarks}"</span></div>`;
                     else block.innerHTML = `<div class="p-4 bg-amber-50 text-amber-700 font-bold">⏳ పరిశీలనలో ఉంది...</div>`;
                 } else { block.innerHTML = `<div class="p-4 bg-stone-50 text-stone-500 text-xs">ఇంకా అప్‌లోడ్ చేయలేదు.</div>`; }
             }
@@ -471,14 +525,34 @@
 
         async function fetchLB() {
             const orderByColumn = lbMetric === 'streak' ? 'streak' : 'total_marks';
-            const { data } = await supabaseClient.from('profiles').select('*').order(orderByColumn, { ascending: false }).limit(20);
+            // Added avatar_url to the select query
+            const { data } = await supabaseClient.from('profiles').select('id, full_name, church_name, streak, total_marks, avatar_url').order(orderByColumn, { ascending: false }).limit(20);
             const tbody = document.getElementById('lbBody'); tbody.innerHTML = "";
             if (data && data.length > 0) {
                 data.forEach((u, i) => {
                     let r = `<span class="text-stone-400 font-bold">#${i + 1}</span>`; if(i===0) r="🥇"; if(i===1) r="🥈"; if(i===2) r="🥉";
                     const isMe = (currentUserSession && currentUserSession.id === u.id) ? "bg-red-50" : "";
                     const m = lbMetric === 'streak' ? `🔥 ${u.streak}` : `⭐ ${u.total_marks}`;
-                    tbody.innerHTML += `<tr class="${isMe}"><td class="px-4 py-4 text-center">${r}</td><td class="px-4 py-4"><div class="font-bold text-sm">${u.full_name}</div><div class="text-[10px] text-stone-500 uppercase">${u.church_name}</div></td><td class="px-4 py-4 text-right font-bold text-red-600">${m}</td></tr>`;
+                    
+                    // Assign avatar or default image
+                    const avatarImg = u.avatar_url 
+                        ? supabaseClient.storage.from('avatars').getPublicUrl(u.avatar_url).data.publicUrl 
+                        : DEFAULT_AVATAR;
+
+                    tbody.innerHTML += `
+                        <tr class="${isMe}">
+                            <td class="px-4 py-4 text-center">${r}</td>
+                            <td class="px-4 py-4">
+                                <div class="flex items-center space-x-3">
+                                    <img src="${avatarImg}" class="w-8 h-8 rounded-full object-cover border border-stone-200 shadow-sm shrink-0">
+                                    <div>
+                                        <div class="font-bold text-sm leading-tight">${u.full_name}</div>
+                                        <div class="text-[10px] text-stone-500 uppercase mt-0.5">${u.church_name}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-4 py-4 text-right font-bold text-red-600">${m}</td>
+                        </tr>`;
                 });
             }
         }
@@ -494,6 +568,14 @@
                 
                 document.getElementById('editName').value = data.full_name;
                 document.getElementById('editChurch').value = data.church_name;
+
+                // Set profile picture if exists
+                if(data.avatar_url) {
+                    const avatarUrl = supabaseClient.storage.from('avatars').getPublicUrl(data.avatar_url).data.publicUrl;
+                    document.getElementById('profImageDisplay').src = avatarUrl;
+                } else {
+                    document.getElementById('profImageDisplay').src = DEFAULT_AVATAR;
+                }
             }
         }
 
